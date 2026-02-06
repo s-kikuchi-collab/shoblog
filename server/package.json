@@ -1,0 +1,17 @@
+{
+  "name": "shoblog-line-reservation",
+  "version": "1.0.0",
+  "description": "LINE Messaging API reservation system for SHOBLOG",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "@line/bot-sdk": "^9.6.0",
+    "@supabase/supabase-js": "^2.49.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}

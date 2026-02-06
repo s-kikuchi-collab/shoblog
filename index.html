@@ -226,6 +226,11 @@ function AppMain(){
   const[edit,setEdit]=useState(null);
   const[cfm,setCfm]=useState(null);
   const[ready,setReady]=useState(false);
+  const[resv,setResv]=useState([]);
+  const[resvF,setResvF]=useState("");
+  const[resvS,setResvS]=useState("all");
+  const[resvLoading,setResvLoading]=useState(false);
+  const API_BASE="http://localhost:3000";
 
   useEffect(()=>{(async()=>{
     let d=null;
@@ -237,6 +242,10 @@ function AppMain(){
     setReady(true);
   })();},[]);
 
+  useEffect(()=>{if(pg==="reservations")fetchResv();},[pg]);
+
+  const fetchResv=useCallback(async(st,q)=>{setResvLoading(true);try{const s=st||resvS;const p=new URLSearchParams();if(s!=="all")p.set("status",s);if(q)p.set("search",q);const r=await fetch(API_BASE+"/api/reservations?"+p.toString());const d=await r.json();setResv(d.data||[]);}catch(e){console.error(e);}setResvLoading(false);},[resvS]);
+  const updateResv=useCallback(async(id,status)=>{try{await fetch(API_BASE+"/api/reservations/"+id,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({status})});fetchResv();}catch(e){console.error(e);}},[fetchResv]);
   const svDb=useCallback(async(d)=>{setDb(d);try{await sbSet("restaurant-db",d);}catch(e){}},[]);
   const svLg=useCallback(async(d)=>{setLogs(d);try{await sbSet("dining-logs",d);}catch(e){}},[]);
   const lb=useMemo(()=>{const m={};logs.forEach(x=>{m[x.name]=(m[x.name]||0)+1;});return m;},[logs]);
@@ -285,7 +294,8 @@ function AppMain(){
   const Br=({label,val,max,top})=>React.createElement("div",{style:{marginBottom:8}},React.createElement("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:2}},React.createElement("span",{style:{fontSize:12,color:TX}},label),React.createElement("span",{style:{fontSize:12,color:GC}},val+"回")),React.createElement("div",{style:{height:4,background:"rgba(139,115,85,0.15)",borderRadius:2}},React.createElement("div",{style:{height:"100%",borderRadius:2,background:top?"linear-gradient(90deg,#c4a474,#e8c87a)":"rgba(196,164,116,0.4)",width:(val/(max||1)*100)+"%"}})));
   const St=({label,val})=>React.createElement("div",{style:{background:"rgba(10,10,10,0.4)",borderRadius:8,padding:10,textAlign:"center"}},React.createElement("div",{style:{fontSize:20,fontWeight:300,color:GC,marginBottom:2}},val),React.createElement("div",{style:{fontSize:9,color:DC,letterSpacing:1}},label));
   const Fd=({label,val,set,type,opts,ph})=>React.createElement("div",{style:{marginBottom:10}},React.createElement("label",{style:{display:"block",fontSize:11,color:GC,marginBottom:3}},label),type==="select"?React.createElement("select",{value:val,onChange:e=>set(e.target.value),style:inp},React.createElement("option",{value:""},"--"),opts.map(o=>React.createElement("option",{key:o,value:o},o))):type==="check"?React.createElement("label",{style:{display:"flex",alignItems:"center",gap:8,color:TX,fontSize:13,cursor:"pointer"}},React.createElement("input",{type:"checkbox",checked:val,onChange:e=>set(e.target.checked)}),ph):React.createElement("input",{type:type||"text",value:val,onChange:e=>set(type==="number"?Number(e.target.value):e.target.value),placeholder:ph||"",style:inp}));
-  const tabs=[["home","選ぶ"],["results","結果"+(recs.length?"("+recs.length+")":"")],["analysis","分析"],["logs","記録("+logs.length+")"],["add","＋記録"],["manage","管理("+TOT+")"]];
+  const tabs=[["home","選ぶ"],["results","結果"+(recs.length?"("+recs.length+")":"")],["analysis","分析"],["logs","記録("+logs.length+")"],["add","＋記録"],["manage","管理("+TOT+")"],["reservations","予約("+resv.length+")"]];
+  const RESV_ST={pending:{label:"確認中",bg:"rgba(232,200,122,0.15)",color:"#e8c87a"},confirmed:{label:"確定",bg:"rgba(120,200,120,0.15)",color:"#78c878"},cancelled:{label:"キャンセル",bg:"rgba(200,100,100,0.15)",color:"#c88080"}};
 
   return React.createElement("div",{style:{minHeight:"100vh",background:"linear-gradient(170deg,#0a0a0a 0%,#1a1510 30%,#0d0d0d 100%)",color:TX,fontFamily:"'Noto Serif JP','Hiragino Mincho ProN',serif"}},
     React.createElement("link",{href:"https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;600;700&display=swap",rel:"stylesheet"}),
@@ -323,7 +333,36 @@ function AppMain(){
               React.createElement("button",{onClick:()=>setEdit({...r}),style:{background:"rgba(196,164,116,0.12)",border:"1px solid rgba(196,164,116,0.3)",color:GC,padding:"4px 12px",borderRadius:4,fontSize:11,fontFamily:"inherit",cursor:"pointer"}},"編集"),
               cfm===r.id?React.createElement(React.Fragment,null,React.createElement("button",{onClick:()=>{delRest(r.id);setCfm(null);},style:{background:"rgba(200,60,60,0.2)",border:"1px solid rgba(200,60,60,0.5)",color:"#ff8080",padding:"4px 10px",borderRadius:4,fontSize:11,fontFamily:"inherit",cursor:"pointer"}},"確定"),React.createElement("button",{onClick:()=>setCfm(null),style:{background:"rgba(139,115,85,0.1)",border:"1px solid rgba(139,115,85,0.2)",color:DC,padding:"4px 10px",borderRadius:4,fontSize:11,fontFamily:"inherit",cursor:"pointer"}},"戻る")):
               React.createElement("button",{onClick:()=>setCfm(r.id),style:{background:"rgba(160,80,80,0.1)",border:"1px solid rgba(160,80,80,0.3)",color:"#c08080",padding:"4px 12px",borderRadius:4,fontSize:11,fontFamily:"inherit",cursor:"pointer"}},"削除")
-            ))))))
+            )))))),
+
+      pg==="reservations"&&React.createElement("div",{style:{animation:"fu 0.5s ease"}},React.createElement("div",{style:{textAlign:"center",marginBottom:24}},React.createElement("h2",{style:{fontSize:20,fontWeight:300,color:GC,letterSpacing:3,marginBottom:4}},"LINE予約管理"),React.createElement("p",{style:{fontSize:12,color:DC}},"LINEから受信した予約を管理")),
+        React.createElement("div",{style:{display:"flex",gap:8,marginBottom:16,flexWrap:"wrap"}},
+          React.createElement("input",{type:"text",placeholder:"店名・送信者で検索...",value:resvF,onChange:e=>setResvF(e.target.value),style:{...inp,flex:1,minWidth:200}}),
+          React.createElement(Ch,{label:"すべて",active:resvS==="all",onClick:()=>{setResvS("all");fetchResv("all",resvF);}}),
+          React.createElement(Ch,{label:"確認中",active:resvS==="pending",onClick:()=>{setResvS("pending");fetchResv("pending",resvF);}}),
+          React.createElement(Ch,{label:"確定",active:resvS==="confirmed",onClick:()=>{setResvS("confirmed");fetchResv("confirmed",resvF);}}),
+          React.createElement(Ch,{label:"キャンセル",active:resvS==="cancelled",onClick:()=>{setResvS("cancelled");fetchResv("cancelled",resvF);}}),
+          React.createElement("button",{onClick:()=>fetchResv(resvS,resvF),style:{...lnk,whiteSpace:"nowrap"}},"更新")),
+        resvLoading?React.createElement("div",{style:{textAlign:"center",padding:40,color:DC}},"読み込み中..."):
+        resv.length===0?React.createElement("div",{style:{textAlign:"center",padding:40,color:DC}},React.createElement("p",{style:{fontSize:36}},"📱"),React.createElement("p",null,"予約データがありません"),React.createElement("p",{style:{fontSize:11}},"LINEからメッセージを送信すると、ここに表示されます")):
+        React.createElement("div",{style:{display:"grid",gap:8}},resv.map(function(rv){
+          var st=RESV_ST[rv.status]||RESV_ST.pending;
+          return React.createElement("div",{key:rv.id,style:{...crd,padding:"14px 18px"}},
+            React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}},
+              React.createElement("div",null,
+                React.createElement("div",{style:{display:"flex",alignItems:"center",gap:8,marginBottom:4}},
+                  React.createElement("strong",{style:{fontSize:14,color:TX}},rv.restaurant_name),
+                  React.createElement("span",{style:{background:st.bg,color:st.color,padding:"2px 8px",borderRadius:4,fontSize:10}},st.label)),
+                React.createElement("div",{style:{display:"flex",gap:4,flexWrap:"wrap",marginBottom:4}},
+                  React.createElement(Tg,{t:"📅 "+rv.date}),
+                  React.createElement(Tg,{t:"🕐 "+rv.time}),
+                  rv.party_size&&React.createElement(Tg,{t:"👥 "+rv.party_size+"名",gold:true}),
+                  React.createElement(Tg,{t:rv.line_display_name}))),
+              React.createElement("div",{style:{display:"flex",gap:4,flexShrink:0}},
+                rv.status!=="confirmed"&&React.createElement("button",{onClick:function(){updateResv(rv.id,"confirmed");},style:{background:"rgba(120,200,120,0.15)",border:"1px solid rgba(120,200,120,0.3)",color:"#78c878",padding:"4px 10px",borderRadius:4,fontSize:11,fontFamily:"inherit",cursor:"pointer"}},"確定"),
+                rv.status!=="cancelled"&&React.createElement("button",{onClick:function(){updateResv(rv.id,"cancelled");},style:{background:"rgba(200,100,100,0.15)",border:"1px solid rgba(200,100,100,0.3)",color:"#c88080",padding:"4px 10px",borderRadius:4,fontSize:11,fontFamily:"inherit",cursor:"pointer"}},"取消"))),
+            rv.raw_message&&React.createElement("div",{style:{fontSize:11,color:"#6b5b4b",paddingTop:6,borderTop:"1px solid rgba(196,164,116,0.1)"}},"💬 ",rv.raw_message),
+            React.createElement("div",{style:{fontSize:10,color:"#4a3a2a",marginTop:4}},new Date(rv.created_at).toLocaleString("ja-JP")));})))
     )
   );
 }
