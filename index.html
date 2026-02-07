@@ -294,7 +294,11 @@ function AppMain({onLogout}){
     c.sort((a,b)=>b.score-a.score);setRecs(c);setCnt(20);setPg("results");
   },[pf,lb,logs,db]);
 
-  const addLog=useCallback(async()=>{if(!nl.name||!nl.date)return;const u=[{...nl,id:Date.now()},...logs];await svLg(u);setNl({name:"",area:"",genre:"",date:"",rating:5,note:"",isNew:false});setPg("logs");},[nl,logs,svLg]);
+  const addLog=useCallback(async()=>{if(!nl.name||!nl.date)return;const u=[{...nl,id:Date.now()},...logs];await svLg(u);
+    const exist=db.find(x=>x.n===nl.name);
+    if(exist){await svDb(db.map(x=>x.id===exist.id?{...x,v:x.v+1}:x));}
+    else if(nl.isNew&&nl.name){await svDb([...db,{n:nl.name,a:nl.area||"",f:"",m:"",p:false,semi:false,g8:false,v:1,g:nl.genre||"",pr:"中",l:"",id:nl.name+"_"+Date.now()}]);}
+    setNl({name:"",area:"",genre:"",date:"",rating:5,note:"",isNew:false});setPg("logs");},[nl,logs,db,svLg,svDb]);
   const delLog=useCallback(async(id)=>{await svLg(logs.filter(x=>x.id!==id));},[logs,svLg]);
   const fLogs=useMemo(()=>lf?logs.filter(x=>[x.name,x.area,x.genre,x.note].some(f=>f&&f.includes(lf))):logs,[logs,lf]);
   const fDb=useMemo(()=>mf?db.filter(x=>[x.n,x.a,x.g,x.f].some(f=>f&&f.includes(mf))):db,[db,mf]);
