@@ -239,6 +239,7 @@ function AppMain({onLogout}){
   const[sel,setSel]=useState(null);
   const[lf,setLf]=useState("");
   const[mf,setMf]=useState("");
+  const[mSel,setMSel]=useState(null);
   const[cnt,setCnt]=useState(20);
   const[edit,setEdit]=useState(null);
   const[cfm,setCfm]=useState(null);
@@ -353,11 +354,29 @@ function AppMain({onLogout}){
           React.createElement("div",{style:{display:"flex",gap:8,marginBottom:16,flexWrap:"wrap"}},React.createElement("input",{type:"text",placeholder:"店名・エリア・ジャンルで検索...",value:mf,onChange:e=>setMf(e.target.value),style:{...inp,flex:1,minWidth:200}}),React.createElement("button",{onClick:()=>setEdit({n:"",a:"",f:"",m:"",p:false,semi:false,g8:false,v:1,g:"",pr:"中",l:"",_new:true}),style:{...lnk,background:"rgba(196,164,116,0.15)",fontWeight:600,whiteSpace:"nowrap"}},"＋ 新規店舗"),React.createElement("button",{onClick:()=>{if(cfm==="reset"){resetDb();setCfm(null);}else setCfm("reset");},style:{...lnk,color:cfm==="reset"?"#ff8080":"#a07050",borderColor:cfm==="reset"?"rgba(255,128,128,0.5)":"rgba(160,112,80,0.3)",whiteSpace:"nowrap"}},cfm==="reset"?"本当にリセット？":"初期化"),cfm==="reset"&&React.createElement("button",{onClick:()=>setCfm(null),style:{...lnk,whiteSpace:"nowrap"}},"キャンセル"),
             React.createElement("button",{onClick:exportDb,style:{...lnk,color:"#70a080",borderColor:"rgba(112,160,128,0.3)",whiteSpace:"nowrap"}},"📤 エクスポート"),
             React.createElement("label",{style:{...lnk,color:"#7090c0",borderColor:"rgba(112,144,192,0.3)",whiteSpace:"nowrap",cursor:"pointer",display:"inline-flex",alignItems:"center"}},"📥 インポート",React.createElement("input",{type:"file",accept:".json",onChange:importDb,style:{display:"none"}}))),
-          React.createElement("div",{style:{display:"grid",gap:6}},fDb.map(r=>React.createElement("div",{key:r.id,style:{...crd,padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"center"}},React.createElement("div",{style:{flex:1,minWidth:0}},React.createElement("div",{style:{display:"flex",alignItems:"center",gap:6,marginBottom:3}},React.createElement("strong",{style:{fontSize:13,color:TX}},r.n),React.createElement(Tg,{t:r.v+"回",gold:true})),React.createElement("div",{style:{display:"flex",gap:4,flexWrap:"wrap"}},React.createElement(Tg,{t:r.a}),r.g.split("/").map(gg=>React.createElement(Tg,{key:gg,t:gg})),r.p&&React.createElement(Tg,{t:"個室",gold:true}),r.semi&&React.createElement(Tg,{t:"半個室",gold:true}),r.g8&&React.createElement(Tg,{t:"8人可",gold:true}),r.l&&String(r.l).split(" ").filter(Boolean).map(h=>React.createElement(Tg,{key:h,t:h})),React.createElement(Tg,{t:r.pr}))),React.createElement("div",{style:{display:"flex",gap:6,marginLeft:8,flexShrink:0}},
-              React.createElement("button",{onClick:()=>setEdit({...r}),style:{background:"rgba(196,164,116,0.12)",border:"1px solid rgba(196,164,116,0.3)",color:GC,padding:"4px 12px",borderRadius:4,fontSize:11,fontFamily:"inherit",cursor:"pointer"}},"編集"),
-              cfm===r.id?React.createElement(React.Fragment,null,React.createElement("button",{onClick:()=>{delRest(r.id);setCfm(null);},style:{background:"rgba(200,60,60,0.2)",border:"1px solid rgba(200,60,60,0.5)",color:"#ff8080",padding:"4px 10px",borderRadius:4,fontSize:11,fontFamily:"inherit",cursor:"pointer"}},"確定"),React.createElement("button",{onClick:()=>setCfm(null),style:{background:"rgba(139,115,85,0.1)",border:"1px solid rgba(139,115,85,0.2)",color:DC,padding:"4px 10px",borderRadius:4,fontSize:11,fontFamily:"inherit",cursor:"pointer"}},"戻る")):
-              React.createElement("button",{onClick:()=>setCfm(r.id),style:{background:"rgba(160,80,80,0.1)",border:"1px solid rgba(160,80,80,0.3)",color:"#c08080",padding:"4px 12px",borderRadius:4,fontSize:11,fontFamily:"inherit",cursor:"pointer"}},"削除")
-            )))))),
+          React.createElement("div",{style:{display:"grid",gap:6}},fDb.map(function(r){
+            var rLogs=logs.filter(function(x){return x.name===r.n;}).sort(function(a,b){return a.date>b.date?-1:1;});
+            var isOpen=mSel===r.id;
+            return React.createElement("div",{key:r.id,style:{...crd,padding:"10px 14px",border:isOpen?"1px solid rgba(196,164,116,0.4)":crd.border}},
+              React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
+                React.createElement("div",{style:{flex:1,minWidth:0,cursor:"pointer"},onClick:function(){setMSel(isOpen?null:r.id);}},
+                  React.createElement("div",{style:{display:"flex",alignItems:"center",gap:6,marginBottom:3}},React.createElement("strong",{style:{fontSize:13,color:TX}},r.n),React.createElement(Tg,{t:r.v+"回",gold:true}),rLogs.length>0&&React.createElement(Tg,{t:"ログ"+rLogs.length+"件"})),
+                  React.createElement("div",{style:{display:"flex",gap:4,flexWrap:"wrap"}},React.createElement(Tg,{t:r.a}),r.g.split("/").map(function(gg){return React.createElement(Tg,{key:gg,t:gg});}),r.p&&React.createElement(Tg,{t:"個室",gold:true}),r.semi&&React.createElement(Tg,{t:"半個室",gold:true}),r.g8&&React.createElement(Tg,{t:"8人可",gold:true}),r.l&&String(r.l).split(" ").filter(Boolean).map(function(h){return React.createElement(Tg,{key:h,t:h});}),React.createElement(Tg,{t:r.pr}))),
+                React.createElement("div",{style:{display:"flex",gap:6,marginLeft:8,flexShrink:0}},
+                  React.createElement("button",{onClick:function(){setEdit({...r});},style:{background:"rgba(196,164,116,0.12)",border:"1px solid rgba(196,164,116,0.3)",color:GC,padding:"4px 12px",borderRadius:4,fontSize:11,fontFamily:"inherit",cursor:"pointer"}},"編集"),
+                  cfm===r.id?React.createElement(React.Fragment,null,React.createElement("button",{onClick:function(){delRest(r.id);setCfm(null);},style:{background:"rgba(200,60,60,0.2)",border:"1px solid rgba(200,60,60,0.5)",color:"#ff8080",padding:"4px 10px",borderRadius:4,fontSize:11,fontFamily:"inherit",cursor:"pointer"}},"確定"),React.createElement("button",{onClick:function(){setCfm(null);},style:{background:"rgba(139,115,85,0.1)",border:"1px solid rgba(139,115,85,0.2)",color:DC,padding:"4px 10px",borderRadius:4,fontSize:11,fontFamily:"inherit",cursor:"pointer"}},"戻る")):
+                  React.createElement("button",{onClick:function(){setCfm(r.id);},style:{background:"rgba(160,80,80,0.1)",border:"1px solid rgba(160,80,80,0.3)",color:"#c08080",padding:"4px 12px",borderRadius:4,fontSize:11,fontFamily:"inherit",cursor:"pointer"}},"削除"))),
+              isOpen&&React.createElement("div",{style:{marginTop:10,paddingTop:10,borderTop:"1px solid rgba(196,164,116,0.15)"}},
+                React.createElement("div",{style:{fontSize:12,color:GC,marginBottom:8}},"訪問履歴"),
+                rLogs.length===0?React.createElement("p",{style:{fontSize:11,color:DC,margin:0}},"まだ訪問記録がありません"):
+                React.createElement("div",{style:{display:"grid",gap:4}},rLogs.map(function(lg){
+                  return React.createElement("div",{key:lg.id,style:{display:"flex",justifyContent:"space-between",alignItems:"center",background:"rgba(10,10,10,0.4)",borderRadius:6,padding:"6px 10px"}},
+                    React.createElement("div",{style:{display:"flex",alignItems:"center",gap:6}},
+                      React.createElement("span",{style:{fontSize:12,color:TX}},lg.date),
+                      React.createElement("span",{style:{fontSize:11,color:"#e8c87a"}},"★".repeat(lg.rating||0)),
+                      lg.note&&React.createElement("span",{style:{fontSize:11,color:DC}},lg.note)),
+                    React.createElement("button",{onClick:function(){delLog(lg.id);},style:{background:"transparent",border:"none",color:"#5a4a3a",cursor:"pointer",fontSize:12,padding:2}},"✕"));
+                }))));}))),
 
       pg==="reservations"&&React.createElement("div",{style:{animation:"fu 0.5s ease"}},React.createElement("div",{style:{textAlign:"center",marginBottom:24}},React.createElement("h2",{style:{fontSize:20,fontWeight:300,color:GC,letterSpacing:3,marginBottom:4}},"LINE予約管理"),React.createElement("p",{style:{fontSize:12,color:DC}},"LINEから受信した予約を管理")),
         React.createElement("div",{style:{display:"flex",gap:8,marginBottom:16,flexWrap:"wrap"}},
