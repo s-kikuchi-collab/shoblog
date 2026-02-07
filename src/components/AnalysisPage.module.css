@@ -1,0 +1,47 @@
+.page {
+  animation: fu 0.5s ease;
+}
+
+.titleWrap {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--gc);
+  letter-spacing: 3px;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: var(--dc);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.insight {
+  font-size: 12px;
+  color: #a09080;
+  line-height: 2;
+}
+
+.insightLine {
+  margin: 0;
+}
+
+.insightHighlight {
+  color: var(--tx);
+}

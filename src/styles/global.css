@@ -1,0 +1,66 @@
+:root {
+  --gc: #c4a474;
+  --dc: #8b7355;
+  --tx: #e8e0d4;
+  --bg: #0a0a0a;
+  --bg-card: rgba(26,21,16,0.8);
+  --gold-gradient: linear-gradient(135deg, #c4a474, #8b7355);
+  --bg-gradient: linear-gradient(170deg, #0a0a0a 0%, #1a1510 30%, #0d0d0d 100%);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fu {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(196, 164, 116, 0.3);
+  border-radius: 2px;
+}
+
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #5a4a3a;
+}
+
+select option {
+  background: #1a1510;
+  color: #e8e0d4;
+}

@@ -1,0 +1,43 @@
+.wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid rgba(196,164,116,0.15);
+}
+
+.lg {
+  width: 56px;
+  height: 56px;
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.placeholder {
+  background: rgba(196,164,116,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+@media (max-width: 480px) {
+  .wrap {
+    width: 40px;
+    height: 40px;
+  }
+  .lg {
+    width: 48px;
+    height: 48px;
+  }
+}

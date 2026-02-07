@@ -1,0 +1,19 @@
+.stat {
+  background: rgba(10,10,10,0.4);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+}
+
+.val {
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--gc);
+  margin-bottom: 2px;
+}
+
+.label {
+  font-size: 9px;
+  color: var(--dc);
+  letter-spacing: 1px;
+}

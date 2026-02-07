@@ -1,0 +1,31 @@
+.wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.circle {
+  display: inline-block;
+  border: 2px solid rgba(196,164,116,0.2);
+  border-top-color: #c4a474;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+.sm {
+  width: 16px;
+  height: 16px;
+}
+
+.lg {
+  width: 40px;
+  height: 40px;
+  border-width: 3px;
+}
+
+.label {
+  font-size: 12px;
+  color: var(--dc);
+  letter-spacing: 1px;
+}

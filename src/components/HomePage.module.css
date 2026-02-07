@@ -1,0 +1,41 @@
+.page {
+  animation: fu 0.5s ease;
+}
+
+.titleWrap {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 300;
+  color: var(--gc);
+  letter-spacing: 4px;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: var(--dc);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.searchBtn {
+  background: var(--gold-gradient);
+  color: var(--bg);
+  border: none;
+  padding: 14px 56px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 3px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(196,164,116,0.3);
+}
