@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { AM, RG, RGA } from "./lib/constants";
 import { sbGet, sbSet } from "./lib/supabase";
 import { INIT_DB } from "./data/seed";
+import TABELOG from "./data/tabelog-data.json";
 import Header from "./components/Header";
 import HomePage from "./components/HomePage";
 import ResultsPage from "./components/ResultsPage";
@@ -62,7 +63,15 @@ export default function AppMain({ onLogout }) {
         d = INIT_DB;
         try { await sbSet("restaurant-db", d); } catch (e) {}
       }
-      d = d.map((x) => ({ ...x, l: typeof x.l === "boolean" ? (x.l ? "24時以降可能" : "") : x.l || "" }));
+      d = d.map((x) => {
+        const tb = TABELOG[x.n] || {};
+        return {
+          ...x,
+          l: typeof x.l === "boolean" ? (x.l ? "24時以降可能" : "") : x.l || "",
+          img: x.img || tb.img || "",
+          url: x.url || tb.url || "",
+        };
+      });
       setDb(d);
       try {
         const r = await sbGet("dining-logs");
