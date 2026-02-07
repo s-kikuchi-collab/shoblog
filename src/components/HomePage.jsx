@@ -1,3 +1,4 @@
+import { useState, useCallback } from "react";
 import {
   GENRES, AREA_GROUPS, ATMS, ATMOSPHERE_STYLES, INTERIOR_OPTIONS,
   PRICE_OPTIONS, PURPOSE_OPTIONS, SPECIALTY_OPTIONS, HOURS_OPTIONS,
@@ -6,14 +7,20 @@ import {
 import { Ch } from "./ui/Chip";
 import s from "./HomePage.module.css";
 
-function Section({ icon, title, children }) {
+function Section({ icon, title, children, defaultOpen = false }) {
+  const [open, setOpen] = useState(defaultOpen);
+
   return (
     <div className={s.section}>
-      <div className={s.secHeader}>
+      <div className={`${s.secHeader} ${!open ? s.secHeaderClosed : ""}`}
+        onClick={() => setOpen((o) => !o)}>
         {icon && <span className={s.secIcon}>{icon}</span>}
-        <span>{title}</span>
+        <span className={s.secTitle}>{title}</span>
+        <span className={s.secArrow}>{open ? "▲" : "▼"}</span>
       </div>
-      {children}
+      <div className={`${s.secBody} ${open ? s.secBodyOpen : ""}`}>
+        {children}
+      </div>
     </div>
   );
 }
@@ -44,12 +51,12 @@ function InteriorCard({ icon, label, active, onClick }) {
 }
 
 export default function HomePage({ pf, setPf, doSearch, TOT }) {
-  const toggleSpec = (label) => {
+  const toggleSpec = useCallback((label) => {
     setPf((p) => {
       const cur = p.spec || [];
       return { ...p, spec: cur.includes(label) ? cur.filter((x) => x !== label) : [...cur, label] };
     });
-  };
+  }, [setPf]);
 
   return (
     <div className={s.page}>
@@ -60,7 +67,7 @@ export default function HomePage({ pf, setPf, doSearch, TOT }) {
       <div className={s.grid}>
 
         {/* 料理ジャンル */}
-        <Section icon="🍽" title="料理ジャンル">
+        <Section icon="🍽" title="料理ジャンル" defaultOpen>
           <div className={s.pills}>
             <Ch label="すべて" active={pf.genre === "すべて"} onClick={() => setPf((p) => ({ ...p, genre: "すべて" }))} />
             {GENRES.filter((g) => g !== "すべて").map((g) => {
@@ -74,7 +81,7 @@ export default function HomePage({ pf, setPf, doSearch, TOT }) {
         </Section>
 
         {/* エリア */}
-        <Section icon="📍" title="エリア">
+        <Section icon="📍" title="エリア" defaultOpen>
           <div className={s.areaWrap}>
             <ColorPill label="すべて" color="#C4A474" active={pf.area === "すべて"}
               onClick={() => setPf((p) => ({ ...p, area: "すべて" }))} />
@@ -167,7 +174,7 @@ export default function HomePage({ pf, setPf, doSearch, TOT }) {
         </Section>
 
       </div>
-      <div style={{ textAlign: "center", marginTop: 32 }}>
+      <div className={s.searchWrap}>
         <button onClick={doSearch} className={s.searchBtn}>
           おすすめを見る
         </button>

@@ -41,3 +41,14 @@
   flex-wrap: wrap;
   gap: 5px;
 }
+
+@media (max-width: 768px) {
+  .genre {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .icon {
+    font-size: 13px;
+  }
+}

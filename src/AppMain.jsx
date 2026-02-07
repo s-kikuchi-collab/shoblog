@@ -366,15 +366,6 @@ export default function AppMain({ onLogout }) {
     );
 
   const TOT = db.length;
-  const tabs = [
-    ["home", "選ぶ"],
-    ["results", "結果" + (recs.length ? "(" + recs.length + ")" : "")],
-    ["analysis", "分析"],
-    ["logs", "記録(" + logs.length + ")"],
-    ["add", "＋記録"],
-    ["manage", "管理(" + TOT + ")"],
-    ["reservations", "予約(" + resv.length + ")"],
-  ];
 
   return (
     <div className={s.app}>
@@ -382,7 +373,7 @@ export default function AppMain({ onLogout }) {
         href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;600;700&display=swap"
         rel="stylesheet"
       />
-      <Header pg={pg} setPg={setPg} tabs={tabs} onLogout={onLogout} setEdit={setEdit} />
+      <Header pg={pg} setPg={setPg} onLogout={onLogout} setEdit={setEdit} />
       <main className={s.main}>
         {pg === "home" && <HomePage pf={pf} setPf={setPf} doSearch={doSearch} TOT={TOT} />}
         {pg === "results" && (
@@ -392,6 +383,13 @@ export default function AppMain({ onLogout }) {
           />
         )}
         {pg === "analysis" && <AnalysisPage an={an} TOT={TOT} logs={logs} db={db} />}
+        {pg === "schedule" && (
+          <div style={{ textAlign: "center", padding: "60px 20px", color: "#6B5B4B" }}>
+            <div style={{ fontSize: 40, marginBottom: 16 }}>📅</div>
+            <div style={{ fontSize: 16, fontWeight: 500, marginBottom: 8, color: "#E8E0D4" }}>予定</div>
+            <div style={{ fontSize: 12 }}>準備中</div>
+          </div>
+        )}
         {pg === "logs" && (
           <LogsPage logs={logs} fLogs={fLogs} lf={lf} setLf={setLf} setPg={setPg} delLog={delLog} busy={busy} db={db} />
         )}

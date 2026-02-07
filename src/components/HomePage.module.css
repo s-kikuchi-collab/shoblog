@@ -8,7 +8,7 @@
 }
 
 .title {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 300;
   color: var(--gc);
   letter-spacing: 4px;
@@ -43,11 +43,39 @@
   gap: 6px;
   border-bottom: 1px solid rgba(196,164,116,0.1);
   padding-bottom: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.secHeaderClosed {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
 .secIcon {
   font-size: 16px;
+}
+
+.secTitle {
+  flex: 1;
+}
+
+.secArrow {
+  font-size: 10px;
+  color: #6B5B4B;
+  transition: transform 0.15s ease;
+}
+
+/* Accordion body — on desktop always visible */
+.secBody {
+  display: block;
+}
+
+.searchWrap {
+  text-align: center;
+  margin-top: 32px;
 }
 
 /* Color pill (shared) */
@@ -158,4 +186,97 @@
   letter-spacing: 3px;
   cursor: pointer;
   box-shadow: 0 4px 20px rgba(196,164,116,0.3);
+}
+
+/* ========== Mobile (768px and below) ========== */
+@media (max-width: 768px) {
+  .title {
+    font-size: 20px;
+    letter-spacing: 3px;
+  }
+
+  .titleWrap {
+    margin-bottom: 24px;
+  }
+
+  .grid {
+    gap: 10px;
+  }
+
+  .section {
+    padding: 16px;
+  }
+
+  /* Accordion: hide body when closed */
+  .secBody {
+    display: none;
+    animation: secFade 0.15s ease;
+  }
+
+  .secBodyOpen {
+    display: block;
+  }
+
+  .secArrow {
+    display: block;
+  }
+
+  /* Pills mobile sizes */
+  .pill {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .pillIcon {
+    font-size: 13px;
+  }
+
+  /* Area pills mobile */
+  .areaGroupPills .pill {
+    font-size: 10px;
+    padding: 5px 10px;
+  }
+
+  /* Interior cards mobile */
+  .intCard {
+    padding: 8px 12px;
+    gap: 6px;
+  }
+
+  .intIcon {
+    font-size: 15px;
+  }
+
+  .intLabel {
+    font-size: 11px;
+  }
+
+  .searchBtn {
+    padding: 12px 40px;
+    font-size: 14px;
+  }
+
+  .searchWrap {
+    margin-top: 24px;
+  }
+}
+
+/* Desktop: always show body, hide arrow */
+@media (min-width: 769px) {
+  .secArrow {
+    display: none;
+  }
+
+  .secBody {
+    display: block !important;
+  }
+
+  .secHeader {
+    cursor: default;
+  }
+}
+
+@keyframes secFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
