@@ -2,16 +2,16 @@ import s from "./Header.module.css";
 
 const TABS = [
   { id: "search", label: "選ぶ", icon: "🔍", defaultPg: "home" },
-  { id: "schedule", label: "予定", icon: "📅", defaultPg: "schedule" },
+  { id: "schedule", label: "予定", icon: "📅", defaultPg: "reservations" },
   { id: "log", label: "記録", icon: "📝", defaultPg: "logs" },
   { id: "manage", label: "管理", icon: "⚙️", defaultPg: "manage" },
 ];
 
 const PG_TAB = {
-  home: "search", results: "search", analysis: "search",
-  schedule: "schedule",
+  home: "search", results: "search",
+  reservations: "schedule",
   logs: "log", add: "log",
-  manage: "manage", reservations: "manage",
+  manage: "manage", analysis: "manage",
 };
 
 export default function Header({ pg, setPg, onLogout, setEdit }) {

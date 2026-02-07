@@ -382,18 +382,35 @@ export default function AppMain({ onLogout }) {
             lb={lb} sel={sel} setSel={setSel}
           />
         )}
-        {pg === "analysis" && <AnalysisPage an={an} TOT={TOT} logs={logs} db={db} />}
-        {pg === "schedule" && (
-          <div style={{ textAlign: "center", padding: "60px 20px", color: "#6B5B4B" }}>
-            <div style={{ fontSize: 40, marginBottom: 16 }}>📅</div>
-            <div style={{ fontSize: 16, fontWeight: 500, marginBottom: 8, color: "#E8E0D4" }}>予定</div>
-            <div style={{ fontSize: 12 }}>準備中</div>
+
+        {/* 記録タブ: サブナビ */}
+        {(pg === "logs" || pg === "add") && (
+          <div className={s.subNav}>
+            <button className={`${s.subTab} ${pg === "logs" ? s.subTabActive : ""}`} onClick={() => setPg("logs")}>記録一覧</button>
+            <button className={`${s.subTab} ${pg === "add" ? s.subTabActive : ""}`} onClick={() => setPg("add")}>＋記録追加</button>
           </div>
         )}
         {pg === "logs" && (
           <LogsPage logs={logs} fLogs={fLogs} lf={lf} setLf={setLf} setPg={setPg} delLog={delLog} busy={busy} db={db} />
         )}
         {pg === "add" && <AddLogPage nl={nl} setNl={setNl} db={db} addLog={addLog} busy={busy} />}
+
+        {/* 予定タブ: 予約 */}
+        {pg === "reservations" && (
+          <ReservationsPage
+            resv={resv} resvF={resvF} setResvF={setResvF} resvS={resvS}
+            setResvS={setResvS} resvLoading={resvLoading} fetchResv={fetchResv}
+            updateResv={updateResv} busy={busy}
+          />
+        )}
+
+        {/* 管理タブ: サブナビ */}
+        {(pg === "manage" || pg === "analysis") && (
+          <div className={s.subNav}>
+            <button className={`${s.subTab} ${pg === "manage" ? s.subTabActive : ""}`} onClick={() => setPg("manage")}>店舗管理</button>
+            <button className={`${s.subTab} ${pg === "analysis" ? s.subTabActive : ""}`} onClick={() => setPg("analysis")}>分析</button>
+          </div>
+        )}
         {pg === "manage" && (
           <ManagePage
             db={db} fDb={fDb} mf={mf} setMf={setMf} edit={edit} setEdit={setEdit}
@@ -402,13 +419,7 @@ export default function AppMain({ onLogout }) {
             exportDb={exportDb} importDb={importDb} TOT={TOT} busy={busy}
           />
         )}
-        {pg === "reservations" && (
-          <ReservationsPage
-            resv={resv} resvF={resvF} setResvF={setResvF} resvS={resvS}
-            setResvS={setResvS} resvLoading={resvLoading} fetchResv={fetchResv}
-            updateResv={updateResv} busy={busy}
-          />
-        )}
+        {pg === "analysis" && <AnalysisPage an={an} TOT={TOT} logs={logs} db={db} />}
       </main>
       <ToastContainer toasts={toasts} />
     </div>
