@@ -5,9 +5,9 @@ export const GENRES = [
 ];
 
 export const AM = [
-  "六本木", "銀座", "虎ノ門", "麻布十番", "西麻布", "東麻布", "広尾", "赤坂",
-  "南青山", "白金", "三田", "四谷", "有楽町", "日比谷", "代官山", "恵比寿",
-  "丸の内", "目黒", "渋谷", "新橋", "荒木町", "南麻布", "神宮前", "日本橋",
+  "六本木", "銀座", "虎ノ門", "麻布十番", "麻布", "広尾", "赤坂",
+  "南青山", "白金", "三田", "四谷", "日比谷", "代官山", "恵比寿",
+  "目黒", "中目黒", "渋谷", "新橋", "神宮前", "日本橋",
 ];
 
 export const RG = {
@@ -23,8 +23,83 @@ export const RGA = Object.values(RG).flat();
 
 export const AREAS = ["すべて", ...AM, "北海道", "北陸", "名古屋", "京都", "大阪", "福岡", "その他（地方）"];
 
+export const AREA_GROUPS = [
+  { label: "六本木・麻布・三田", color: "#C4A474", areas: ["六本木", "麻布十番", "麻布", "虎ノ門", "三田", "赤羽橋", "白金"] },
+  { label: "銀座・新橋", color: "#2E86AB", areas: ["銀座", "新橋", "日比谷", "日本橋"] },
+  { label: "赤坂・青山", color: "#27AE60", areas: ["赤坂", "南青山", "神宮前"] },
+  { label: "恵比寿・広尾", color: "#8E44AD", areas: ["広尾", "恵比寿", "代官山", "目黒", "中目黒"] },
+  { label: "渋谷・新宿", color: "#E67E22", areas: ["渋谷", "新宿", "代々木", "四谷"] },
+  { label: "関東その他", color: "#78909C", areas: ["東京その他", "埼玉", "千葉", "神奈川"] },
+  { label: "地方", color: "#D4A017", areas: [
+    { name: "北海道", icon: "🦀" }, { name: "北陸", icon: "🌊" }, { name: "名古屋", icon: "🏯" },
+    { name: "京都", icon: "⛩️" }, { name: "大阪", icon: "🐙" }, { name: "福岡", icon: "🍜" },
+    { name: "その他（地方）", icon: "📍" },
+  ]},
+];
+
 export const ATMS = [
-  "すべて", "落ち着き", "活気", "高級感", "隠れ家", "カジュアル", "モダン", "洗練", "重厚", "シック", "大将癖あり", "大将キレ気味",
+  "すべて", "落ち着き", "活気", "高級感", "隠れ家", "カジュアル", "モダン", "暗め", "大将癖あり", "大将キレ気味",
+];
+
+export const ATMOSPHERE_STYLES = {
+  "すべて": "#C4A474",
+  "落ち着き": "#5D7B93",
+  "活気": "#E74C3C",
+  "高級感": "#C4A474",
+  "隠れ家": "#6C3483",
+  "カジュアル": "#27AE60",
+  "モダン": "#2E86AB",
+  "暗め": "#37474F",
+  "大将癖あり": "#E65100",
+  "大将キレ気味": "#C0392B",
+};
+
+export const INTERIOR_OPTIONS = [
+  { value: "any", label: "指定なし", icon: "🔓" },
+  { value: "yes", label: "個室あり", icon: "🚪" },
+  { value: "semi", label: "半個室あり", icon: "🪟" },
+  { value: "group8", label: "8人同席対応可能", icon: "👥" },
+  { value: "no", label: "カウンター", icon: "🪑" },
+];
+
+export const PRICE_OPTIONS = [
+  { value: "any", label: "指定なし", icon: "💴", color: "#C4A474" },
+  { value: "low", label: "5-6千円未満", icon: "🪙", color: "#27AE60" },
+  { value: "mid", label: "1万円ぐらい", icon: "💰", color: "#2E86AB" },
+  { value: "high", label: "2万円-3万円", icon: "💎", color: "#8E44AD" },
+  { value: "ultra", label: "4万円以上", icon: "👑", color: "#E74C3C" },
+];
+
+export const PURPOSE_OPTIONS = [
+  { value: "any", label: "指定なし", icon: "🍺", color: "#27AE60" },
+  { value: "entertainment", label: "接待・会食", icon: "🤝", color: "#C4A474" },
+  { value: "date", label: "デート", icon: "💕", color: "#E91E63" },
+  { value: "celebration", label: "記念日", icon: "🎂", color: "#9C27B0" },
+  { value: "solo", label: "1人向け", icon: "🧘", color: "#607D8B" },
+  { value: "cospa", label: "コスパ向け", icon: "💰", color: "#FF9800" },
+  { value: "luxury", label: "高級", icon: "👑", color: "#FFD700" },
+  { value: "lastsupper", label: "最後の晩餐", icon: "✨", color: "#E74C3C" },
+  { value: "secret", label: "密会", icon: "🤫", color: "#37474F" },
+];
+
+export const SPECIALTY_OPTIONS = [
+  { label: "アラカルト", icon: "📋", color: "#27AE60" },
+  { label: "コースオンリー", icon: "🎯", color: "#2E86AB" },
+  { label: "時間限定アラカルト", icon: "⏳", color: "#E67E22" },
+  { label: "ワイン品揃え良い", icon: "🍷", color: "#AD1457" },
+  { label: "日本酒豊富", icon: "🍶", color: "#5D7B93" },
+  { label: "カクテル最高", icon: "🍸", color: "#6C3483" },
+  { label: "つまみといえば", icon: "🥜", color: "#8D6E63" },
+  { label: "締めの王様", icon: "🍙", color: "#D4A017" },
+  { label: "カスタマイズ可能", icon: "🔧", color: "#607D8B" },
+  { label: "デザートオンリー", icon: "🍰", color: "#E91E63" },
+];
+
+export const HOURS_OPTIONS = [
+  { value: "any", label: "指定なし", icon: "⏰", color: "#C4A474" },
+  { value: "22時以降可能", label: "22時以降可能", icon: "🌙", color: "#5D7B93" },
+  { value: "24時以降可能", label: "24時以降可能", icon: "🌃", color: "#6C3483" },
+  { value: "日曜営業", label: "日曜営業", icon: "☀️", color: "#E67E22" },
 ];
 
 export const GENRE_STYLES = {
