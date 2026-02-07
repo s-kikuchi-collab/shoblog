@@ -244,6 +244,8 @@ function AppMain(){
 
   useEffect(()=>{if(pg==="reservations")fetchResv();},[pg]);
 
+  const svDb=useCallback(async(d)=>{setDb(d);try{await sbSet("restaurant-db",d);}catch(e){}},[]);
+  const svLg=useCallback(async(d)=>{setLogs(d);try{await sbSet("dining-logs",d);}catch(e){}},[]);
   const ngH={"ngrok-skip-browser-warning":"true"};
   const fetchResv=useCallback(async(st,q)=>{setResvLoading(true);try{const s=st||resvS;const p=new URLSearchParams();if(s!=="all")p.set("status",s);if(q)p.set("search",q);const r=await fetch(API_BASE+"/api/reservations?"+p.toString(),{headers:ngH});const d=await r.json();setResv(d.data||[]);}catch(e){console.error(e);}setResvLoading(false);},[resvS]);
   const updateResv=useCallback(async(id,status)=>{try{await fetch(API_BASE+"/api/reservations/"+id,{method:"PATCH",headers:{...ngH,"Content-Type":"application/json"},body:JSON.stringify({status})});
@@ -253,8 +255,6 @@ function AppMain(){
       const ul=[newLog,...logs];await svLg(ul);
       if(match){const nd=db.map(x=>x.id===match.id?{...x,v:x.v+1}:x);await svDb(nd);}
     }}fetchResv();}catch(e){console.error(e);}},[fetchResv,resv,db,logs,svLg,svDb]);
-  const svDb=useCallback(async(d)=>{setDb(d);try{await sbSet("restaurant-db",d);}catch(e){}},[]);
-  const svLg=useCallback(async(d)=>{setLogs(d);try{await sbSet("dining-logs",d);}catch(e){}},[]);
   const lb=useMemo(()=>{const m={};logs.forEach(x=>{m[x.name]=(m[x.name]||0)+1;});return m;},[logs]);
 
   const doSearch=useCallback(()=>{
