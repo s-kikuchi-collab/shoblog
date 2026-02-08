@@ -9,13 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // CORS（管理画面からのAPI呼び出し用）
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "http://localhost:4173",
-    process.env.FRONTEND_URL,
-  ].filter(Boolean),
-}));
+app.use(cors());
 
 // LINE Webhook（署名検証のためraw bodyが必要 → json parseの前に設定）
 app.use("/webhook", lineMiddleware, webhookRouter);
