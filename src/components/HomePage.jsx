@@ -50,7 +50,31 @@ function InteriorCard({ icon, label, active, onClick }) {
   );
 }
 
+const ALL_TOKYO = AREA_GROUPS.slice(0, 5).flatMap((g) =>
+  g.areas.map((a) => (typeof a === "string" ? a : a.name))
+);
+
 export default function HomePage({ pf, setPf, doSearch, TOT }) {
+  const toggleArea = useCallback((name) => {
+    setPf((p) => {
+      const cur = p.area || [];
+      return { ...p, area: cur.includes(name) ? cur.filter((x) => x !== name) : [...cur, name] };
+    });
+  }, [setPf]);
+
+  const toggleTokyoAll = useCallback(() => {
+    setPf((p) => {
+      const cur = p.area || [];
+      const allSelected = ALL_TOKYO.every((a) => cur.includes(a));
+      return {
+        ...p,
+        area: allSelected
+          ? cur.filter((a) => !ALL_TOKYO.includes(a))
+          : [...new Set([...cur, ...ALL_TOKYO])],
+      };
+    });
+  }, [setPf]);
+
   const toggleSpec = useCallback((label) => {
     setPf((p) => {
       const cur = p.spec || [];
@@ -80,11 +104,16 @@ export default function HomePage({ pf, setPf, doSearch, TOT }) {
           </div>
         </Section>
 
-        {/* エリア */}
-        <Section icon="📍" title="エリア" defaultOpen>
+        {/* エリア（複数選択可） */}
+        <Section icon="📍" title="エリア（複数選択可）" defaultOpen>
           <div className={s.areaWrap}>
-            <ColorPill label="すべて" color="#C4A474" active={pf.area === "すべて"}
-              onClick={() => setPf((p) => ({ ...p, area: "すべて" }))} />
+            <div className={s.areaGroupPills}>
+              <ColorPill label="すべて" color="#C4A474" active={pf.area.length === 0}
+                onClick={() => setPf((p) => ({ ...p, area: [] }))} />
+              <ColorPill label="東京全て" color="#E67E22"
+                active={ALL_TOKYO.every((a) => pf.area.includes(a))}
+                onClick={toggleTokyoAll} />
+            </div>
             {AREA_GROUPS.map((grp) => (
               <div key={grp.label} className={s.areaGroup}>
                 <div className={s.areaGroupLabel} style={{ color: grp.color }}>{grp.label}</div>
@@ -94,8 +123,8 @@ export default function HomePage({ pf, setPf, doSearch, TOT }) {
                     const icon = typeof area === "object" ? area.icon : undefined;
                     return (
                       <ColorPill key={name} label={name} icon={icon} color={grp.color}
-                        active={pf.area === name}
-                        onClick={() => setPf((p) => ({ ...p, area: name }))} />
+                        active={pf.area.includes(name)}
+                        onClick={() => toggleArea(name)} />
                     );
                   })}
                 </div>

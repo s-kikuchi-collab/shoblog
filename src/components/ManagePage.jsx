@@ -1,8 +1,7 @@
-import { GENRES, PRS, HOURS, getGenreStyle } from "../lib/constants";
+import { getGenreStyle } from "../lib/constants";
 import Tg from "./ui/Tag";
-import { Ch } from "./ui/Chip";
-import Fd from "./ui/Field";
 import RestThumb from "./ui/RestThumb";
+import EditForm from "./ui/EditForm";
 import shared from "../styles/shared.module.css";
 import s from "./ManagePage.module.css";
 
@@ -17,118 +16,13 @@ export default function ManagePage({
         <p className={s.subtitle}>{TOT}店舗 — 追加・編集・削除</p>
       </div>
       {edit ? (
-        <div className={s.editForm}>
-          <div className={s.editHeader}>
-            <h3 className={s.editTitle}>
-              {edit._new ? "新規店舗追加" : "店舗情報を編集"}
-            </h3>
-            <button onClick={() => setEdit(null)} className={s.closeBtn}>
-              ✕
-            </button>
-          </div>
-          <Fd label="店名 *" val={edit.n} set={(v) => setEdit((e) => ({ ...e, n: v }))} ph="店名を入力" />
-          <div className={s.twoCol}>
-            <Fd label="エリア" val={edit.a} set={(v) => setEdit((e) => ({ ...e, a: v }))} ph="六本木" />
-            <div style={{ marginBottom: 10 }}>
-              <label className={s.genreLabel}>ジャンル（複数選択可）</label>
-            </div>
-          </div>
-          <div className={s.genreWrap}>
-            {GENRES.filter((g) => g !== "すべて").map((g) => {
-              const gs = getGenreStyle(g);
-              return (
-                <Ch
-                  key={g}
-                  label={g}
-                  active={(edit.g || "").split("/").includes(g)}
-                  onClick={() => {
-                    const arr = (edit.g || "").split("/").filter(Boolean);
-                    setEdit((e) => ({
-                      ...e,
-                      g: arr.includes(g)
-                        ? arr.filter((x) => x !== g).join("/")
-                        : [...arr, g].join("/"),
-                    }));
-                  }}
-                  icon={gs.icon}
-                  color={gs.color}
-                />
-              );
-            })}
-          </div>
-          <Fd
-            label="特徴・説明"
-            val={edit.f}
-            set={(v) => setEdit((e) => ({ ...e, f: v }))}
-            ph="お店の特徴"
-          />
-          <Fd
-            label="雰囲気キーワード（スペース区切り）"
-            val={edit.m}
-            set={(v) => setEdit((e) => ({ ...e, m: v }))}
-            ph="落ち着き 高級感 モダン"
-          />
-          <div className={s.twoCol}>
-            <Fd
-              label="価格帯"
-              val={edit.pr}
-              set={(v) => setEdit((e) => ({ ...e, pr: v }))}
-              type="select"
-              opts={PRS}
-            />
-            <Fd
-              label="訪問回数"
-              val={edit.v}
-              set={(v) => setEdit((e) => ({ ...e, v: v }))}
-              type="number"
-            />
-          </div>
-          <div className={s.checkGroup}>
-            <Fd label="" val={edit.p} set={(v) => setEdit((e) => ({ ...e, p: v }))} type="check" ph="個室あり" />
-            <Fd label="" val={edit.semi} set={(v) => setEdit((e) => ({ ...e, semi: v }))} type="check" ph="半個室あり" />
-            <Fd label="" val={edit.g8} set={(v) => setEdit((e) => ({ ...e, g8: v }))} type="check" ph="8人同席対応可能" />
-          </div>
-          <Fd
-            label="画像URL"
-            val={edit.img || ""}
-            set={(v) => setEdit((e) => ({ ...e, img: v }))}
-            ph="https://example.com/photo.jpg"
-          />
-          <Fd
-            label="外部リンク（食べログ等）"
-            val={edit.url || ""}
-            set={(v) => setEdit((e) => ({ ...e, url: v }))}
-            ph="https://tabelog.com/..."
-          />
-          <div className={s.hoursGroup}>
-            <label className={s.hoursLabel}>営業時間</label>
-            <div className={s.hoursWrap}>
-              {HOURS.map((h) => (
-                <Ch
-                  key={h}
-                  label={h}
-                  active={(edit.l || "").includes(h)}
-                  onClick={() => {
-                    const cur = edit.l || "";
-                    setEdit((e) => ({
-                      ...e,
-                      l: cur.includes(h)
-                        ? cur.split(" ").filter((x) => x !== h).join(" ")
-                        : (cur ? cur + " " : "") + h,
-                    }));
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-          <button
-            onClick={saveEdit}
-            disabled={!edit.n || busy.saveEdit}
-            className={`${s.saveBtn} ${!edit.n || busy.saveEdit ? s.saveBtnDisabled : ""} ${busy.saveEdit ? s.saveBtnBusy : ""}`}
-          >
-            {busy.saveEdit ? "保存中..." : edit._new ? "追加する" : "保存する"}
-          </button>
-        </div>
+        <EditForm
+          edit={edit}
+          setEdit={setEdit}
+          saveEdit={saveEdit}
+          onClose={() => setEdit(null)}
+          busy={busy.saveEdit}
+        />
       ) : (
         <>
           <div className={s.toolbar}>
@@ -143,36 +37,14 @@ export default function ManagePage({
               onClick={() =>
                 setEdit({
                   n: "", a: "", f: "", m: "", p: false, semi: false, g8: false,
-                  v: 1, g: "", pr: "中", l: "", img: "", url: "", _new: true,
+                  v: 1, g: "", pr: "中", l: "", img: "", url: "",
+                  purp: [], spec: [], _new: true,
                 })
               }
               className={`${shared.link} ${s.addBtn}`}
             >
               ＋ 新規店舗
             </button>
-            <button
-              onClick={() => {
-                if (cfm === "reset") { resetDb(); setCfm(null); } else setCfm("reset");
-              }}
-              disabled={busy.resetDb}
-              className={`${shared.link} ${s.resetBtn} ${cfm === "reset" ? s.resetBtnConfirm : ""} ${busy.resetDb ? s.resetBtnBusy : ""}`}
-            >
-              {busy.resetDb ? "初期化中..." : cfm === "reset" ? "本当にリセット？" : "初期化"}
-            </button>
-            {cfm === "reset" && (
-              <button onClick={() => setCfm(null)} className={`${shared.link} ${s.cancelBtn}`}>
-                キャンセル
-              </button>
-            )}
-            <button onClick={exportDb} className={`${shared.link} ${s.exportBtn}`}>
-              📤 エクスポート
-            </button>
-            <label
-              className={`${shared.link} ${s.importLabel} ${busy.importDb ? s.importLabelBusy : ""}`}
-            >
-              {busy.importDb ? "📥 インポート中..." : "📥 インポート"}
-              <input type="file" accept=".json" onChange={importDb} disabled={busy.importDb} style={{ display: "none" }} />
-            </label>
           </div>
           <div className={s.restGrid}>
             {fDb.map((r) => {

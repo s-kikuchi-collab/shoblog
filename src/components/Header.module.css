@@ -130,19 +130,21 @@
     backdrop-filter: blur(16px);
     border-top: 1px solid rgba(196,164,116,0.12);
     justify-content: space-around;
-    padding: 6px 0;
-    padding-bottom: calc(6px + env(safe-area-inset-bottom, 8px));
+    padding: 10px 0;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 12px));
   }
 
   .bnTab {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    gap: 3px;
     background: none;
     border: none;
     cursor: pointer;
-    padding: 4px 12px;
+    padding: 8px 16px;
+    min-width: 44px;
+    min-height: 44px;
     position: relative;
     filter: grayscale(0.6) opacity(0.5);
     transition: all 0.2s ease;
@@ -157,19 +159,19 @@
     top: -4px;
     left: 50%;
     transform: translateX(-50%);
-    width: 20px;
+    width: 24px;
     height: 3px;
     border-radius: 2px;
     background: #C4A474;
   }
 
   .bnIcon {
-    font-size: 20px;
+    font-size: 24px;
     line-height: 1;
   }
 
   .bnLabel {
-    font-size: 10px;
+    font-size: 11px;
     color: #6B5B4B;
     font-family: 'Noto Serif JP', serif;
   }

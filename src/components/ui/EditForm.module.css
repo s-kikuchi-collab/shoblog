@@ -1,0 +1,123 @@
+.form {
+  background: rgba(26,21,16,0.8);
+  border: 1px solid rgba(196,164,116,0.1);
+  border-radius: 10px;
+  padding: 24px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.compact {
+  padding-top: 14px;
+  margin-top: 10px;
+  border-top: 1px solid rgba(196,164,116,0.15);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.title {
+  margin: 0;
+  font-size: 16px;
+  color: var(--gc);
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: var(--dc);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.sec {
+  margin-bottom: 14px;
+}
+
+.secLabel {
+  display: block;
+  font-size: 11px;
+  color: var(--gc);
+  margin-bottom: 6px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.areaWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.areaGrp {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.areaGrpName {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.saveBtn {
+  flex: 1;
+  background: var(--gold-gradient);
+  color: var(--bg);
+  border: none;
+  padding: 12px 0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+}
+
+.saveBtnOff {
+  background: rgba(139,115,85,0.2);
+  color: #5a4a3a;
+  cursor: default;
+}
+
+.cancelBtn {
+  background: transparent;
+  border: 1px solid rgba(139,115,85,0.3);
+  color: var(--dc);
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .form {
+    padding: 16px;
+  }
+
+  .row2 {
+    grid-template-columns: 1fr;
+  }
+}

@@ -19,7 +19,7 @@ export default function AppMain({ onLogout }) {
   const [pg, setPg] = useState("home");
   const [db, setDb] = useState([]);
   const [pf, setPf] = useState({
-    genre: "すべて", area: "すべて", priv: "any", atmo: "すべて", hours: "any",
+    genre: "すべて", area: [], priv: "any", atmo: "すべて", hours: "any",
     purp: "any", price: "any", spec: [],
   });
   const [recs, setRecs] = useState([]);
@@ -174,12 +174,15 @@ export default function AppMain({ onLogout }) {
   const doSearch = useCallback(() => {
     let c = db.slice();
     if (pf.genre !== "すべて") c = c.filter((x) => x.g.split("/").includes(pf.genre));
-    if (pf.area !== "すべて") {
-      if (pf.area === "その他（地方）")
-        c = c.filter((x) => !AM.some((aa) => x.a.includes(aa)) && !RGA.some((aa) => x.a.includes(aa)));
-      else if (RG[pf.area])
-        c = c.filter((x) => RG[pf.area].some((ci) => x.a.includes(ci)));
-      else c = c.filter((x) => x.a.includes(pf.area));
+    if (pf.area.length > 0) {
+      c = c.filter((x) =>
+        pf.area.some((a) => {
+          if (a === "その他（地方）")
+            return !AM.some((aa) => x.a.includes(aa)) && !RGA.some((aa) => x.a.includes(aa));
+          if (RG[a]) return RG[a].some((ci) => x.a.includes(ci));
+          return x.a.includes(a);
+        })
+      );
     }
     if (pf.priv === "yes") c = c.filter((x) => x.p);
     else if (pf.priv === "no") c = c.filter((x) => !x.p);
@@ -380,6 +383,7 @@ export default function AppMain({ onLogout }) {
           <ResultsPage
             pf={pf} recs={recs} cnt={cnt} setCnt={setCnt} setPg={setPg}
             lb={lb} sel={sel} setSel={setSel}
+            edit={edit} setEdit={setEdit} saveEdit={saveEdit} busy={busy}
           />
         )}
 

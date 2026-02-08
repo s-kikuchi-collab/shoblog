@@ -146,3 +146,19 @@
   text-align: center;
   margin-top: 12px;
 }
+
+.editIconBtn {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  opacity: 0.5;
+  transition: opacity 0.15s ease;
+  flex-shrink: 0;
+}
+
+.editIconBtn:hover {
+  opacity: 1;
+}
