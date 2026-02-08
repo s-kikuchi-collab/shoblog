@@ -37,7 +37,7 @@ export default function ManagePage({
               onClick={() =>
                 setEdit({
                   n: "", a: "", f: "", m: "", p: false, semi: false, g8: false,
-                  v: 1, g: "", pr: "中", l: "", img: "", url: "",
+                  v: 1, g: "", pr: "1万円ぐらい", l: "", img: "", url: "",
                   purp: [], spec: [], _new: true,
                 })
               }

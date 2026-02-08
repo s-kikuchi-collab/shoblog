@@ -65,6 +65,7 @@ export default function AppMain({ onLogout }) {
         try { await sbSet("restaurant-db", d); } catch (e) {}
       }
       const areaMap = { "西麻布": "麻布", "東麻布": "麻布", "南麻布": "麻布", "有楽町": "日比谷", "丸の内": "日比谷", "荒木町": "四谷" };
+      const priceMap = { "中": "5-6千円未満", "中〜高": "1万円ぐらい", "高": "2万円-3万円" };
       const normArea = (a) => (a || "").split("/").map((s) => { const t = s.trim(); return areaMap[t] || t; }).join("/");
       d = d.map((x) => {
         const tb = TABELOG[x.n] || {};
@@ -72,6 +73,7 @@ export default function AppMain({ onLogout }) {
           ...x,
           a: normArea(x.a),
           l: typeof x.l === "boolean" ? (x.l ? "24時以降可能" : "") : x.l || "",
+          pr: priceMap[x.pr] || x.pr,
           img: x.img || tb.img || "",
           url: x.url || tb.url || "",
           pn: x.pn || 0,
@@ -191,8 +193,7 @@ export default function AppMain({ onLogout }) {
     if (pf.hours !== "any") c = c.filter((x) => (x.l || "").includes(pf.hours));
     if (pf.atmo !== "すべて") c = c.filter((x) => x.m.includes(pf.atmo));
     if (pf.price !== "any") {
-      const pm = { low: (p) => p === "中", mid: (p) => p === "中〜高", high: (p) => p === "高", ultra: (p) => p === "高" };
-      if (pm[pf.price]) c = c.filter((x) => pm[pf.price](x.pr));
+      c = c.filter((x) => x.pr === pf.price);
     }
     if (pf.spec && pf.spec.length > 0) {
       c = c.filter((x) => pf.spec.every((sp) => (x.spec || []).includes(sp)));
@@ -200,14 +201,16 @@ export default function AppMain({ onLogout }) {
     c = c.map((x) => {
       const b = lb[x.n] || 0;
       let s = (x.v + b) * 10;
-      if (pf.purp === "entertainment" && x.p && x.pr === "高") s += 30;
-      if (pf.purp === "any" && (x.pr === "中" || x.pr === "中〜高")) s += 20;
+      const hi = x.pr === "2万円-3万円" || x.pr === "4万円以上";
+      const lo = x.pr === "5-6千円未満" || x.pr === "1万円ぐらい";
+      if (pf.purp === "entertainment" && x.p && hi) s += 30;
+      if (pf.purp === "any" && lo) s += 20;
       if (pf.purp === "date" && (x.m.includes("落ち着") || x.m.includes("隠れ家") || x.m.includes("シック"))) s += 25;
-      if (pf.purp === "celebration" && x.pr === "高") s += 35;
+      if (pf.purp === "celebration" && hi) s += 35;
       if (pf.purp === "solo" && !x.p && x.m.includes("カジュアル")) s += 20;
-      if (pf.purp === "cospa" && (x.pr === "中" || x.pr === "中〜高")) s += 30;
-      if (pf.purp === "luxury" && x.pr === "高" && x.m.includes("高級感")) s += 35;
-      if (pf.purp === "lastsupper" && x.pr === "高" && x.m.includes("洗練")) s += 40;
+      if (pf.purp === "cospa" && lo) s += 30;
+      if (pf.purp === "luxury" && hi && x.m.includes("高級感")) s += 35;
+      if (pf.purp === "lastsupper" && hi && x.m.includes("洗練")) s += 40;
       if (pf.purp === "secret" && x.m.includes("隠れ家")) s += 35;
       const ul = logs.filter((ll) => ll.name === x.n);
       if (ul.length > 0) s += Math.round(ul.reduce((a, ll) => a + (ll.rating || 3), 0) / ul.length * 3);
@@ -233,7 +236,7 @@ export default function AppMain({ onLogout }) {
           ...db,
           {
             n: nl.name, a: nl.area || "", f: "", m: "", p: false, semi: false, g8: false,
-            v: 1, g: nl.genre || "", pr: "中", l: "", img: "", url: "",
+            v: 1, g: nl.genre || "", pr: "1万円ぐらい", l: "", img: "", url: "",
             pn: 0, spec: [], id: nl.name + "_" + Date.now(),
           },
         ]);

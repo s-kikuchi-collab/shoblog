@@ -64,10 +64,10 @@ export const INTERIOR_OPTIONS = [
 
 export const PRICE_OPTIONS = [
   { value: "any", label: "指定なし", icon: "💴", color: "#C4A474" },
-  { value: "low", label: "5-6千円未満", icon: "🪙", color: "#27AE60" },
-  { value: "mid", label: "1万円ぐらい", icon: "💰", color: "#2E86AB" },
-  { value: "high", label: "2万円-3万円", icon: "💎", color: "#8E44AD" },
-  { value: "ultra", label: "4万円以上", icon: "👑", color: "#E74C3C" },
+  { value: "5-6千円未満", label: "5-6千円未満", icon: "🪙", color: "#27AE60" },
+  { value: "1万円ぐらい", label: "1万円ぐらい", icon: "💰", color: "#2E86AB" },
+  { value: "2万円-3万円", label: "2万円-3万円", icon: "💎", color: "#8E44AD" },
+  { value: "4万円以上", label: "4万円以上", icon: "👑", color: "#E74C3C" },
 ];
 
 export const PURPOSE_OPTIONS = [
@@ -138,6 +138,6 @@ export function getGenreStyle(genre) {
   return GENRE_STYLES[genre] || GENRE_DEFAULT;
 }
 
-export const PRS = ["中", "中〜高", "高"];
+export const PRS = ["5-6千円未満", "1万円ぐらい", "2万円-3万円", "4万円以上"];
 
 export const HOURS = ["22時以降可能", "24時以降可能", "日曜営業"];
