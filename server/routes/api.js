@@ -1,5 +1,5 @@
 const express = require("express");
-const { getReservations, updateReservationStatus } = require("../lib/supabase");
+const { getReservations, updateReservationStatus, deleteReservation, deleteAllReservations } = require("../lib/supabase");
 
 const router = express.Router();
 
@@ -35,6 +35,28 @@ router.patch("/reservations/:id", async (req, res) => {
   } catch (err) {
     console.error("ステータス更新エラー:", err);
     res.status(500).json({ error: "ステータスの更新に失敗しました" });
+  }
+});
+
+// 予約削除
+router.delete("/reservations/:id", async (req, res) => {
+  try {
+    await deleteReservation(req.params.id);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("予約削除エラー:", err);
+    res.status(500).json({ error: "予約の削除に失敗しました" });
+  }
+});
+
+// 予約全件削除
+router.delete("/reservations", async (req, res) => {
+  try {
+    await deleteAllReservations();
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("予約全削除エラー:", err);
+    res.status(500).json({ error: "予約の全削除に失敗しました" });
   }
 });
 

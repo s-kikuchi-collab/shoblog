@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Ch } from "./ui/Chip";
 import Tg from "./ui/Tag";
 import Spinner from "./ui/Spinner";
@@ -11,8 +12,10 @@ const RESV_ST = {
 };
 
 export default function ReservationsPage({
-  resv, resvF, setResvF, resvS, setResvS, resvLoading, fetchResv, updateResv, busy,
+  resv, resvF, setResvF, resvS, setResvS, resvLoading, fetchResv, updateResv, deleteResv, clearResv, busy,
 }) {
+  const [delCfm, setDelCfm] = useState(null);
+  const [clearCfm, setClearCfm] = useState(false);
   return (
     <div className={s.page}>
       <div className={s.titleWrap}>
@@ -50,6 +53,27 @@ export default function ReservationsPage({
         <button onClick={() => fetchResv(resvS, resvF)} className={shared.link} style={{ whiteSpace: "nowrap" }}>
           更新
         </button>
+        {resv.length > 0 && (
+          clearCfm ? (
+            <>
+              <button
+                onClick={() => { clearResv(); setClearCfm(false); }}
+                disabled={busy.clearResv}
+                className={shared.link}
+                style={{ whiteSpace: "nowrap", color: "#c88080" }}
+              >
+                {busy.clearResv ? "削除中..." : "本当に全削除"}
+              </button>
+              <button onClick={() => setClearCfm(false)} className={shared.link} style={{ whiteSpace: "nowrap" }}>
+                戻る
+              </button>
+            </>
+          ) : (
+            <button onClick={() => setClearCfm(true)} className={shared.link} style={{ whiteSpace: "nowrap", color: "#c88080" }}>
+              全件削除
+            </button>
+          )
+        )}
       </div>
       {resvLoading ? (
         <div className={s.loadingWrap}><Spinner size="lg" label="読み込み中..." /></div>
@@ -97,6 +121,24 @@ export default function ReservationsPage({
                         className={`${s.cancelActionBtn} ${busy.updateResv ? s.actionBtnBusy : ""}`}
                       >
                         取消
+                      </button>
+                    )}
+                    {delCfm === rv.id ? (
+                      <>
+                        <button
+                          onClick={() => { deleteResv(rv.id); setDelCfm(null); }}
+                          disabled={busy.deleteResv}
+                          className={`${s.deleteActionBtn} ${busy.deleteResv ? s.actionBtnBusy : ""}`}
+                        >
+                          {busy.deleteResv ? "..." : "確定"}
+                        </button>
+                        <button onClick={() => setDelCfm(null)} className={s.cancelActionBtn}>
+                          戻る
+                        </button>
+                      </>
+                    ) : (
+                      <button onClick={() => setDelCfm(rv.id)} className={s.deleteActionBtn}>
+                        削除
                       </button>
                     )}
                   </div>

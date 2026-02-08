@@ -167,6 +167,36 @@ export default function AppMain({ onLogout }) {
     [fetchResv, resv, db, logs, svLg, svDb, toast, setBusyKey]
   );
 
+  const deleteResv = useCallback(
+    async (id) => {
+      setBusyKey("deleteResv", true);
+      try {
+        await fetch(API_BASE + "/api/reservations/" + id, { method: "DELETE" });
+        toast("success", "予約を削除しました");
+        fetchResv();
+      } catch (e) {
+        toast("error", "予約の削除に失敗しました");
+      }
+      setBusyKey("deleteResv", false);
+    },
+    [fetchResv, toast, setBusyKey]
+  );
+
+  const clearResv = useCallback(
+    async () => {
+      setBusyKey("clearResv", true);
+      try {
+        await fetch(API_BASE + "/api/reservations", { method: "DELETE" });
+        toast("success", "全予約を削除しました");
+        fetchResv();
+      } catch (e) {
+        toast("error", "全削除に失敗しました");
+      }
+      setBusyKey("clearResv", false);
+    },
+    [fetchResv, toast, setBusyKey]
+  );
+
   const lb = useMemo(() => {
     const m = {};
     logs.forEach((x) => { m[x.name] = (m[x.name] || 0) + 1; });
@@ -414,7 +444,7 @@ export default function AppMain({ onLogout }) {
           <ReservationsPage
             resv={resv} resvF={resvF} setResvF={setResvF} resvS={resvS}
             setResvS={setResvS} resvLoading={resvLoading} fetchResv={fetchResv}
-            updateResv={updateResv} busy={busy}
+            updateResv={updateResv} deleteResv={deleteResv} clearResv={clearResv} busy={busy}
           />
         )}
 

@@ -59,4 +59,22 @@ async function updateReservationStatus(id, status) {
   return data;
 }
 
-module.exports = { supabase, insertReservation, getReservations, updateReservationStatus };
+async function deleteReservation(id) {
+  const { error } = await supabase
+    .from("reservations")
+    .delete()
+    .eq("id", id);
+
+  if (error) throw error;
+}
+
+async function deleteAllReservations() {
+  const { error } = await supabase
+    .from("reservations")
+    .delete()
+    .neq("id", "00000000-0000-0000-0000-000000000000");
+
+  if (error) throw error;
+}
+
+module.exports = { supabase, insertReservation, getReservations, updateReservationStatus, deleteReservation, deleteAllReservations };

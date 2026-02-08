@@ -138,6 +138,17 @@
   cursor: pointer;
 }
 
+.deleteActionBtn {
+  background: rgba(160,80,80,0.15);
+  border: 1px solid rgba(160,80,80,0.3);
+  color: #a05050;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
 .actionBtnBusy {
   cursor: default;
   opacity: 0.5;
