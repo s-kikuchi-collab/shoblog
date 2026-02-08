@@ -30,6 +30,7 @@ async function getReservations({ status, search, limit = 50, offset = 0 }) {
   let query = supabase
     .from("reservations")
     .select("*", { count: "exact" })
+    .neq("status", "deleted")
     .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1);
 
@@ -62,7 +63,7 @@ async function updateReservationStatus(id, status) {
 async function deleteReservation(id) {
   const { error } = await supabase
     .from("reservations")
-    .delete()
+    .update({ status: "deleted" })
     .eq("id", id);
 
   if (error) throw error;
@@ -71,8 +72,8 @@ async function deleteReservation(id) {
 async function deleteAllReservations() {
   const { error } = await supabase
     .from("reservations")
-    .delete()
-    .neq("id", "00000000-0000-0000-0000-000000000000");
+    .update({ status: "deleted" })
+    .neq("status", "deleted");
 
   if (error) throw error;
 }
