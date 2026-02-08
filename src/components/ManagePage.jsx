@@ -38,7 +38,7 @@ export default function ManagePage({
                 setEdit({
                   n: "", a: "", f: "", m: "", p: false, semi: false, g8: false,
                   v: 1, g: "", pr: "1万円ぐらい", l: "", img: "", url: "",
-                  purp: [], spec: [], _new: true,
+                  nk: "", purp: [], spec: [], _new: true,
                 })
               }
               className={`${shared.link} ${s.addBtn}`}

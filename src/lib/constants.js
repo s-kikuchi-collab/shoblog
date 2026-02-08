@@ -28,7 +28,7 @@ export const AREA_GROUPS = [
   { label: "銀座・新橋", color: "#2E86AB", areas: ["銀座", "新橋", "日比谷", "日本橋"] },
   { label: "赤坂・青山", color: "#27AE60", areas: ["赤坂", "南青山", "神宮前"] },
   { label: "恵比寿・広尾", color: "#8E44AD", areas: ["広尾", "恵比寿", "代官山", "目黒", "中目黒"] },
-  { label: "渋谷・新宿", color: "#E67E22", areas: ["渋谷", "新宿", "代々木", "四谷"] },
+  { label: "渋谷・新宿", color: "#E67E22", areas: ["渋谷", "新宿", "代々木", "四谷", "神楽坂"] },
   { label: "関東その他", color: "#78909C", areas: ["東京その他", "埼玉", "千葉", "神奈川"] },
   { label: "地方", color: "#D4A017", areas: [
     { name: "北海道", icon: "🦀" }, { name: "北陸", icon: "🌊" }, { name: "名古屋", icon: "🏯" },

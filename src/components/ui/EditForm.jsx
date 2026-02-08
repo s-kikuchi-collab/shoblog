@@ -51,6 +51,7 @@ export default function EditForm({ edit, setEdit, saveEdit, onClose, busy, compa
       )}
 
       <Fd label="店名 *" val={edit.n} set={(v) => setEdit((e) => ({ ...e, n: v }))} ph="店名を入力" />
+      <Fd label="読みがな" val={edit.nk || ""} set={(v) => setEdit((e) => ({ ...e, nk: v }))} ph="ひらがなで入力" />
 
       <div className={s.sec}>
         <label className={s.secLabel}>📍 エリア（複数選択可）</label>

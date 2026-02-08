@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { AM, RG, RGA } from "./lib/constants";
 import { sbGet, sbSet } from "./lib/supabase";
 import { INIT_DB } from "./data/seed";
+import KANA_MAP, { toHiragana } from "./data/kana-map";
 import TABELOG from "./data/tabelog-data.json";
 import Header from "./components/Header";
 import HomePage from "./components/HomePage";
@@ -78,6 +79,7 @@ export default function AppMain({ onLogout }) {
           url: x.url || tb.url || "",
           pn: x.pn || 0,
           spec: x.spec || [],
+          nk: x.nk || KANA_MAP[x.n] || "",
         };
       });
       setDb(d);
@@ -266,10 +268,14 @@ export default function AppMain({ onLogout }) {
     [logs, lf]
   );
 
-  const fDb = useMemo(
-    () => (mf ? db.filter((x) => [x.n, x.a, x.g, x.f].some((f) => f && f.includes(mf))) : db),
-    [db, mf]
-  );
+  const fDb = useMemo(() => {
+    if (!mf) return db;
+    const q = toHiragana(mf);
+    return db.filter((x) =>
+      [x.n, x.a, x.g, x.f].some((f) => f && f.includes(mf)) ||
+      (x.nk && x.nk.includes(q))
+    );
+  }, [db, mf]);
 
   const saveEdit = useCallback(async () => {
     if (!edit || !edit.n) return;
@@ -282,6 +288,9 @@ export default function AppMain({ onLogout }) {
         nd = db.map((x) => (x.id === edit.id ? { ...edit } : x));
       }
       await svDb(nd);
+      setRecs(prev => prev.map(r =>
+        r.id === edit.id ? { ...edit, score: r.score, tv: r.tv } : r
+      ));
       setEdit(null);
       toast("success", "店舗情報を保存しました");
     } catch (e) {
