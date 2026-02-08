@@ -9,7 +9,13 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // CORS（管理画面からのAPI呼び出し用）
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:4173",
+    process.env.FRONTEND_URL,
+  ].filter(Boolean),
+}));
 
 // LINE Webhook（署名検証のためraw bodyが必要 → json parseの前に設定）
 app.use("/webhook", lineMiddleware, webhookRouter);
@@ -23,8 +29,13 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
+// Keep-alive: 14分ごとに自身にリクエストしてRender無料プランのスリープを防ぐ
+if (process.env.RENDER_EXTERNAL_URL) {
+  setInterval(() => {
+    fetch(`${process.env.RENDER_EXTERNAL_URL}/health`).catch(() => {});
+  }, 14 * 60 * 1000);
+}
+
 app.listen(PORT, () => {
-  console.log(`SHOBLOG LINE予約サーバー起動 → http://localhost:${PORT}`);
-  console.log(`  Webhook URL: http://localhost:${PORT}/webhook`);
-  console.log(`  API URL:     http://localhost:${PORT}/api/reservations`);
+  console.log(`SHOBLOG LINE予約サーバー起動 → port ${PORT}`);
 });

@@ -40,7 +40,7 @@ export default function AppMain({ onLogout }) {
   const [resvLoading, setResvLoading] = useState(false);
   const [toasts, setToasts] = useState([]);
   const [busy, setBusy] = useState({});
-  const API_BASE = "https://reproachingly-mendable-waneta.ngrok-free.dev";
+  const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:3000";
 
   const toast = useCallback((type, message) => {
     const id = Date.now() + Math.random();
@@ -110,8 +110,6 @@ export default function AppMain({ onLogout }) {
     await sbSet("dining-logs", d);
   }, []);
 
-  const ngH = { "ngrok-skip-browser-warning": "true" };
-
   const fetchResv = useCallback(
     async (st, q) => {
       setResvLoading(true);
@@ -120,7 +118,7 @@ export default function AppMain({ onLogout }) {
         const p = new URLSearchParams();
         if (s !== "all") p.set("status", s);
         if (q) p.set("search", q);
-        const r = await fetch(API_BASE + "/api/reservations?" + p.toString(), { headers: ngH });
+        const r = await fetch(API_BASE + "/api/reservations?" + p.toString());
         const d = await r.json();
         setResv(d.data || []);
       } catch (e) {
@@ -137,7 +135,7 @@ export default function AppMain({ onLogout }) {
       try {
         await fetch(API_BASE + "/api/reservations/" + id, {
           method: "PATCH",
-          headers: { ...ngH, "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ status }),
         });
         if (status === "confirmed") {
