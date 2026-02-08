@@ -53,7 +53,7 @@ export default function EditForm({ edit, setEdit, saveEdit, onClose, busy, compa
       <Fd label="店名 *" val={edit.n} set={(v) => setEdit((e) => ({ ...e, n: v }))} ph="店名を入力" />
 
       <div className={s.sec}>
-        <label className={s.secLabel}>📍 エリア</label>
+        <label className={s.secLabel}>📍 エリア（複数選択可）</label>
         <div className={s.areaWrap}>
           {AREA_GROUPS.map((grp) => (
             <div key={grp.label} className={s.areaGrp}>
@@ -63,8 +63,8 @@ export default function EditForm({ edit, setEdit, saveEdit, onClose, busy, compa
                   const name = typeof a === "string" ? a : a.name;
                   return (
                     <Ch key={name} label={name} color={grp.color}
-                      active={edit.a === name}
-                      onClick={() => setEdit((e) => ({ ...e, a: name }))} />
+                      active={(edit.a || "").split("/").includes(name)}
+                      onClick={() => toggleSlash("a", name)} />
                   );
                 })}
               </div>
