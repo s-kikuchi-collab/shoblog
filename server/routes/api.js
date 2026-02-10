@@ -2,7 +2,7 @@ const express = require("express");
 const {
   getReservations, updateReservationStatus, deleteReservation, deleteAllReservations,
   getBookings, insertBooking, updateBooking, deleteBooking,
-  getLogs, insertLog, deleteLog,
+  getLogs, insertLog, updateLog, deleteLog,
 } = require("../lib/supabase");
 
 const router = express.Router();
@@ -125,6 +125,16 @@ router.post("/logs", async (req, res) => {
   } catch (err) {
     console.error("ログ追加エラー:", err);
     res.status(500).json({ error: "ログの追加に失敗しました", detail: err.message || String(err) });
+  }
+});
+
+router.patch("/logs/:id", async (req, res) => {
+  try {
+    const data = await updateLog(req.params.id, req.body);
+    res.json(data);
+  } catch (err) {
+    console.error("ログ更新エラー:", err);
+    res.status(500).json({ error: "ログの更新に失敗しました" });
   }
 });
 

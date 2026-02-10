@@ -162,6 +162,18 @@ async function insertLog(log) {
   return data;
 }
 
+async function updateLog(id, fields) {
+  const { data, error } = await supabase
+    .from("dining_logs")
+    .update(fields)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
 async function deleteLog(id) {
   const { error } = await supabase
     .from("dining_logs")
@@ -175,5 +187,5 @@ module.exports = {
   supabase,
   insertReservation, getReservations, updateReservationStatus, deleteReservation, deleteAllReservations,
   getBookings, insertBooking, updateBooking, deleteBooking,
-  getLogs, insertLog, deleteLog,
+  getLogs, insertLog, updateLog, deleteLog,
 };

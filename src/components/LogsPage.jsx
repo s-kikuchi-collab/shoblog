@@ -1,16 +1,24 @@
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { getGenreStyle } from "../lib/constants";
 import Tg from "./ui/Tag";
 import RestThumb from "./ui/RestThumb";
+import LogEntryForm from "./ui/LogEntryForm";
 import shared from "../styles/shared.module.css";
 import s from "./LogsPage.module.css";
 
-export default function LogsPage({ logs, fLogs, lf, setLf, setPg, delLog, busy, db }) {
+export default function LogsPage({ logs, fLogs, lf, setLf, setPg, delLog, updateLog, busy, db }) {
+  const [editId, setEditId] = useState(null);
+
   const dbMap = useMemo(() => {
     const m = {};
     (db || []).forEach((r) => { m[r.n] = r; });
     return m;
   }, [db]);
+
+  const handleUpdate = async (id, logData) => {
+    await updateLog(id, logData);
+    setEditId(null);
+  };
 
   return (
     <div className={s.page}>
@@ -36,6 +44,26 @@ export default function LogsPage({ logs, fLogs, lf, setLf, setPg, delLog, busy, 
         <div className={s.grid}>
           {fLogs.map((x) => {
             const rest = dbMap[x.name];
+            if (editId === x.id) {
+              return (
+                <div key={x.id} className={s.logItem}>
+                  <LogEntryForm
+                    defaultShop={x.name}
+                    defaultDate={x.date}
+                    defaultWho={x.who}
+                    defaultPurpose={x.purpose}
+                    defaultPeople={x.people}
+                    defaultRating={x.rating}
+                    defaultMemo={x.note}
+                    defaultPricePerPerson={x.price_per_person}
+                    onSave={(data) => handleUpdate(x.id, data)}
+                    onCancel={() => setEditId(null)}
+                    db={db}
+                    busy={busy.updateLog}
+                  />
+                </div>
+              );
+            }
             return (
               <div key={x.id} className={s.logItem}>
                 <RestThumb img={rest?.img} genre={x.genre || rest?.g} />
@@ -51,7 +79,6 @@ export default function LogsPage({ logs, fLogs, lf, setLf, setPg, delLog, busy, 
                     ) : (
                       <span className={s.logName}>{x.name}</span>
                     )}
-                    {x.isNew && <span className={s.newBadge}>NEW</span>}
                   </div>
                   <div className={s.tagRow}>
                     <Tg t={x.date} />
@@ -68,13 +95,16 @@ export default function LogsPage({ logs, fLogs, lf, setLf, setPg, delLog, busy, 
                   </div>
                   {x.note && <p className={s.note}>{x.note}</p>}
                 </div>
-                <button
-                  onClick={() => delLog(x.id)}
-                  disabled={busy.delLog}
-                  className={`${s.delBtn} ${busy.delLog ? s.delBtnDisabled : ""}`}
-                >
-                  ✕
-                </button>
+                <div className={s.btnGroup}>
+                  <button onClick={() => setEditId(x.id)} className={s.editBtn}>✏️</button>
+                  <button
+                    onClick={() => delLog(x.id)}
+                    disabled={busy.delLog}
+                    className={`${s.delBtn} ${busy.delLog ? s.delBtnDisabled : ""}`}
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
             );
           })}

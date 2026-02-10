@@ -1,19 +1,29 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.chipRow {
+.chips {
   display: flex;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .shopFixed {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 0;
+  padding: 6px 0;
+}
+
+.shopSelected {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
 }
 
 .shopLabel {
@@ -26,10 +36,21 @@
   color: var(--tx);
 }
 
+.clearBtn {
+  background: none;
+  border: none;
+  color: var(--dc);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
 .field {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  position: relative;
+  width: 100%;
 }
 
 .label {
@@ -38,28 +59,10 @@
   letter-spacing: 1px;
 }
 
-.newFields {
-  display: grid;
-  gap: 10px;
-}
-
 .twoCol {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-}
-
-.genreWrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.row {
-  display: grid;
-  grid-template-columns: 1fr 80px auto;
-  gap: 12px;
-  align-items: end;
 }
 
 .ratingRow {
@@ -79,9 +82,55 @@
   opacity: 0.2;
 }
 
+/* ドロップダウン */
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: #1a1510;
+  border: 1px solid rgba(196,164,116,0.25);
+  border-radius: 6px;
+  margin-top: 2px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.dropItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(196,164,116,0.08);
+  color: var(--tx);
+  padding: 10px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.dropItem:last-child {
+  border-bottom: none;
+}
+
+.dropItem:hover {
+  background: rgba(196,164,116,0.08);
+}
+
+.dropMeta {
+  font-size: 10px;
+  color: var(--dc);
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
 .textareaResize {
   resize: vertical;
-  min-height: 60px;
+  min-height: 50px;
 }
 
 .actions {

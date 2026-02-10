@@ -108,13 +108,28 @@
   margin: 4px 0 0;
 }
 
+.btnGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.editBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+}
+
 .delBtn {
   background: transparent;
   border: none;
   color: #5a4a3a;
   cursor: pointer;
   font-size: 14px;
-  padding: 4px;
+  padding: 2px 4px;
   flex-shrink: 0;
 }
 

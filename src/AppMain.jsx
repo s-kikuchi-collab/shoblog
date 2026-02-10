@@ -25,7 +25,6 @@ export default function AppMain({ onLogout }) {
   });
   const [recs, setRecs] = useState([]);
   const [logs, setLogs] = useState([]);
-  const [nl, setNl] = useState({ name: "", area: "", genre: "", date: "", rating: 5, note: "", isNew: false });
   const [sel, setSel] = useState(null);
   const [lf, setLf] = useState("");
   const [mf, setMf] = useState("");
@@ -233,15 +232,6 @@ export default function AppMain({ onLogout }) {
       const match = db.find((x) => x.n === logData.name);
       if (match) {
         await svDb(db.map((x) => (x.id === match.id ? { ...x, v: x.v + 1 } : x)));
-      } else if (logData.isNew && logData.name) {
-        await svDb([
-          ...db,
-          {
-            n: logData.name, a: logData.area || "", f: "", m: "", p: false, semi: false, g8: false,
-            v: 1, g: logData.genre || "", pr: "1万円ぐらい", l: "", img: "", url: "",
-            pn: 0, spec: [], id: logData.name + "_" + Date.now(),
-          },
-        ]);
       }
       toast("success", "完了しました");
     } catch (e) {
@@ -306,8 +296,8 @@ export default function AppMain({ onLogout }) {
   }, [pf, lb, logs, db]);
 
   const addLog = useCallback(async (logData) => {
-    const d = logData || nl;
-    if (!d.name || !d.date) return;
+    if (!logData || !logData.name || !logData.date) return;
+    const d = logData;
     setBusyKey("addLog", true);
     try {
       const resp = await fetch(API_BASE + "/api/logs", {
@@ -329,24 +319,14 @@ export default function AppMain({ onLogout }) {
       const exist = db.find((x) => x.n === d.name);
       if (exist) {
         await svDb(db.map((x) => (x.id === exist.id ? { ...x, v: x.v + 1 } : x)));
-      } else if (d.isNew && d.name) {
-        await svDb([
-          ...db,
-          {
-            n: d.name, a: d.area || "", f: "", m: "", p: false, semi: false, g8: false,
-            v: 1, g: d.genre || "", pr: "1万円ぐらい", l: "", img: "", url: "",
-            pn: 0, spec: [], id: d.name + "_" + Date.now(),
-          },
-        ]);
       }
-      if (!logData) setNl({ name: "", area: "", genre: "", date: "", rating: 5, note: "", isNew: false });
       toast("success", "記録を保存しました");
       setPg("logs");
     } catch (e) {
       toast("error", "記録の保存に失敗しました");
     }
     setBusyKey("addLog", false);
-  }, [nl, db, fetchLogs, svDb, toast, setBusyKey]);
+  }, [db, fetchLogs, svDb, toast, setBusyKey]);
 
   const delLog = useCallback(async (id) => {
     setBusyKey("delLog", true);
@@ -358,6 +338,32 @@ export default function AppMain({ onLogout }) {
       toast("error", "記録の削除に失敗しました");
     }
     setBusyKey("delLog", false);
+  }, [fetchLogs, toast, setBusyKey]);
+
+  const updateLog = useCallback(async (id, logData) => {
+    setBusyKey("updateLog", true);
+    try {
+      const resp = await fetch(API_BASE + "/api/logs/" + id, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: logData.name,
+          date: logData.date,
+          rating: logData.rating,
+          memo: logData.memo || "",
+          who: logData.who || "shobu",
+          purpose: logData.purpose || "",
+          people: logData.people || 2,
+          price_per_person: logData.price_per_person || "",
+        }),
+      });
+      if (!resp.ok) throw new Error("PATCH failed");
+      await fetchLogs();
+      toast("success", "記録を更新しました");
+    } catch (e) {
+      toast("error", "記録の更新に失敗しました");
+    }
+    setBusyKey("updateLog", false);
   }, [fetchLogs, toast, setBusyKey]);
 
   // Enrich logs with area/genre from db
@@ -529,7 +535,7 @@ export default function AppMain({ onLogout }) {
           </div>
         )}
         {pg === "logs" && (
-          <LogsPage logs={enrichedLogs} fLogs={fLogs} lf={lf} setLf={setLf} setPg={setPg} delLog={delLog} busy={busy} db={db} />
+          <LogsPage logs={enrichedLogs} fLogs={fLogs} lf={lf} setLf={setLf} setPg={setPg} delLog={delLog} updateLog={updateLog} busy={busy} db={db} />
         )}
         {pg === "add" && <AddLogPage db={db} addLog={addLog} busy={busy} />}
 
