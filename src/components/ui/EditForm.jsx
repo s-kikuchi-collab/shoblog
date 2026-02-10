@@ -124,6 +124,8 @@ export default function EditForm({ edit, setEdit, saveEdit, onClose, busy, compa
             onClick={() => setEdit((e) => ({ ...e, tbl: !e.tbl }))} />
           <Ch label="🪑 カウンター" active={edit.cnt}
             onClick={() => setEdit((e) => ({ ...e, cnt: !e.cnt }))} />
+          <Ch label="🌿 テラス" active={edit.terrace}
+            onClick={() => setEdit((e) => ({ ...e, terrace: !e.terrace }))} />
         </div>
       </div>
 

@@ -264,6 +264,7 @@ export default function AppMain({ onLogout }) {
     else if (pf.priv === "group8") c = c.filter((x) => x.g8);
     else if (pf.priv === "table") c = c.filter((x) => x.tbl);
     else if (pf.priv === "counter") c = c.filter((x) => x.cnt);
+    else if (pf.priv === "terrace") c = c.filter((x) => x.terrace);
     if (pf.hours !== "any") c = c.filter((x) => (x.l || "").includes(pf.hours));
     if (pf.atmo !== "すべて") c = c.filter((x) => x.m.includes(pf.atmo));
     if (pf.price !== "any") {

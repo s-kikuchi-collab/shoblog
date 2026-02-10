@@ -61,6 +61,7 @@ export const INTERIOR_OPTIONS = [
   { value: "group8", label: "8人同席対応可能", icon: "👥" },
   { value: "table", label: "テーブル", icon: "🍽️" },
   { value: "counter", label: "カウンター", icon: "🪑" },
+  { value: "terrace", label: "テラス", icon: "🌿" },
 ];
 
 export const PRICE_OPTIONS = [
@@ -96,6 +97,8 @@ export const SPECIALTY_OPTIONS = [
   { label: "デザートオンリー", icon: "🍰", color: "#E91E63" },
   { label: "会員制", icon: "🔑", color: "#37474F" },
   { label: "カラオケ", icon: "🎤", color: "#9C27B0" },
+  { label: "土日のお昼最高", icon: "☀️", color: "#F9A825" },
+  { label: "テラス最高", icon: "🌿", color: "#27AE60" },
 ];
 
 export const PRICE_PER_PERSON = [
@@ -108,6 +111,9 @@ export const HOURS_OPTIONS = [
   { value: "22時以降可能", label: "22時以降可能", icon: "🌙", color: "#5D7B93" },
   { value: "24時以降可能", label: "24時以降可能", icon: "🌃", color: "#6C3483" },
   { value: "日曜営業", label: "日曜営業", icon: "☀️", color: "#E67E22" },
+  { value: "ランチ営業", label: "ランチ営業", icon: "🌤️", color: "#F9A825" },
+  { value: "日曜ランチ営業", label: "日曜ランチ営業", icon: "🍳", color: "#FF8F00" },
+  { value: "昼から通し営業", label: "昼から通し営業", icon: "🕛", color: "#2E86AB" },
 ];
 
 export const GENRE_STYLES = {
@@ -148,4 +154,4 @@ export function getGenreStyle(genre) {
 
 export const PRS = ["5-6千円未満", "1万円ぐらい", "2万円-3万円", "4万円以上"];
 
-export const HOURS = ["22時以降可能", "24時以降可能", "日曜営業"];
+export const HOURS = ["22時以降可能", "24時以降可能", "日曜営業", "ランチ営業", "日曜ランチ営業", "昼から通し営業"];
