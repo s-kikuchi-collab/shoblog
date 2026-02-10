@@ -94,6 +94,7 @@ export const SPECIALTY_OPTIONS = [
   { label: "カスタマイズ可能", icon: "🔧", color: "#607D8B" },
   { label: "デザートオンリー", icon: "🍰", color: "#E91E63" },
   { label: "会員制", icon: "🔑", color: "#37474F" },
+  { label: "カラオケ", icon: "🎤", color: "#9C27B0" },
 ];
 
 export const PRICE_PER_PERSON = [

@@ -13,6 +13,7 @@ const PURPOSES = [
   { value: "友人", icon: "👫" },
   { value: "家族", icon: "👨‍👩‍👧" },
   { value: "仕事仲間", icon: "💼" },
+  { value: "パーティー", icon: "🎉" },
 ];
 
 export default function LogEntryForm({
