@@ -93,6 +93,7 @@ export const SPECIALTY_OPTIONS = [
   { label: "締めの王様", icon: "🍙", color: "#D4A017" },
   { label: "カスタマイズ可能", icon: "🔧", color: "#607D8B" },
   { label: "デザートオンリー", icon: "🍰", color: "#E91E63" },
+  { label: "会員制", icon: "🔑", color: "#37474F" },
 ];
 
 export const HOURS_OPTIONS = [
