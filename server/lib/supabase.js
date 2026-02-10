@@ -78,4 +78,60 @@ async function deleteAllReservations() {
   if (error) throw error;
 }
 
-module.exports = { supabase, insertReservation, getReservations, updateReservationStatus, deleteReservation, deleteAllReservations };
+// --- Bookings (新・予約管理) ---
+
+async function getBookings() {
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .order("date", { ascending: true });
+
+  if (error) throw error;
+  return data;
+}
+
+async function insertBooking(b) {
+  const { data, error } = await supabase
+    .from("bookings")
+    .insert({
+      shop: b.shop,
+      date: b.date,
+      time: b.time || "19:00",
+      people: b.people || 2,
+      purpose: b.purpose || "",
+      who: b.who || "shobu",
+      status: "upcoming",
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+async function updateBooking(id, fields) {
+  const { data, error } = await supabase
+    .from("bookings")
+    .update(fields)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+async function deleteBooking(id) {
+  const { error } = await supabase
+    .from("bookings")
+    .delete()
+    .eq("id", id);
+
+  if (error) throw error;
+}
+
+module.exports = {
+  supabase,
+  insertReservation, getReservations, updateReservationStatus, deleteReservation, deleteAllReservations,
+  getBookings, insertBooking, updateBooking, deleteBooking,
+};

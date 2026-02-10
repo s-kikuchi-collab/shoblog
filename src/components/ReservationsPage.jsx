@@ -192,7 +192,7 @@ export default function ReservationsPage({ resv, db, busy, addResv, editResv, de
 
   const completed = useMemo(() =>
     resv.filter((r) => r.status === "completed")
-      .sort((a, b) => (b.completedAt || "").localeCompare(a.completedAt || "")),
+      .sort((a, b) => (b.completed_at || "").localeCompare(a.completed_at || "")),
     [resv]
   );
 

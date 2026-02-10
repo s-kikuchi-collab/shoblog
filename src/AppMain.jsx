@@ -88,13 +88,6 @@ export default function AppMain({ onLogout }) {
       } catch (e) {
         toast("error", "記録の読み込みに失敗しました");
       }
-      try {
-        const r = await sbGet("reservations");
-        if (r) {
-          const rv = typeof r === "string" ? JSON.parse(r) : r;
-          setResv(rv);
-        }
-      } catch (e) {}
       setReady(true);
     })();
   }, []);
@@ -109,62 +102,80 @@ export default function AppMain({ onLogout }) {
     await sbSet("dining-logs", d);
   }, []);
 
-  const svResv = useCallback(async (d) => {
-    setResv(d);
-    await sbSet("reservations", d);
+  const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:3000";
+
+  const fetchResv = useCallback(async () => {
+    try {
+      const r = await fetch(API_BASE + "/api/bookings");
+      const d = await r.json();
+      setResv(Array.isArray(d) ? d : []);
+    } catch (e) {}
   }, []);
+
+  useEffect(() => {
+    if (pg === "reservations") fetchResv();
+  }, [pg]);
 
   const addResv = useCallback(async (rv) => {
     setBusyKey("addResv", true);
     try {
-      const nr = {
-        ...rv,
-        id: crypto.randomUUID(),
-        status: "upcoming",
-        satisfaction: null,
-        comment: "",
-        createdAt: new Date().toISOString(),
-        completedAt: null,
-      };
-      await svResv([nr, ...resv]);
+      await fetch(API_BASE + "/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(rv),
+      });
+      await fetchResv();
       toast("success", "予約を追加しました");
     } catch (e) {
       toast("error", "予約の追加に失敗しました");
     }
     setBusyKey("addResv", false);
-  }, [resv, svResv, toast, setBusyKey]);
+  }, [fetchResv, toast, setBusyKey]);
 
   const editResv = useCallback(async (id, data) => {
     setBusyKey("editResv", true);
     try {
-      await svResv(resv.map((r) => (r.id === id ? { ...r, ...data } : r)));
+      await fetch(API_BASE + "/api/bookings/" + id, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      await fetchResv();
       toast("success", "予約を更新しました");
     } catch (e) {
       toast("error", "予約の更新に失敗しました");
     }
     setBusyKey("editResv", false);
-  }, [resv, svResv, toast, setBusyKey]);
+  }, [fetchResv, toast, setBusyKey]);
 
   const deleteResv = useCallback(async (id) => {
     setBusyKey("deleteResv", true);
     try {
-      await svResv(resv.filter((r) => r.id !== id));
+      await fetch(API_BASE + "/api/bookings/" + id, { method: "DELETE" });
+      await fetchResv();
       toast("success", "予約を削除しました");
     } catch (e) {
       toast("error", "予約の削除に失敗しました");
     }
     setBusyKey("deleteResv", false);
-  }, [resv, svResv, toast, setBusyKey]);
+  }, [fetchResv, toast, setBusyKey]);
 
   const completeResv = useCallback(async (id, satisfaction, comment) => {
     setBusyKey("completeResv", true);
     try {
       const rv = resv.find((r) => r.id === id);
       if (!rv) return;
-      const now = new Date().toISOString();
-      await svResv(resv.map((r) =>
-        r.id === id ? { ...r, status: "completed", satisfaction, comment, completedAt: now } : r
-      ));
+      await fetch(API_BASE + "/api/bookings/" + id, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: "completed",
+          satisfaction,
+          comment,
+          completed_at: new Date().toISOString(),
+        }),
+      });
+      await fetchResv();
       const match = db.find((x) => x.n === rv.shop);
       const newLog = {
         id: Date.now(),
@@ -187,7 +198,7 @@ export default function AppMain({ onLogout }) {
       toast("error", "完了処理に失敗しました");
     }
     setBusyKey("completeResv", false);
-  }, [resv, svResv, db, logs, svLg, svDb, toast, setBusyKey]);
+  }, [resv, fetchResv, db, logs, svLg, svDb, toast, setBusyKey]);
 
   const lb = useMemo(() => {
     const m = {};

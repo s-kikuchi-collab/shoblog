@@ -1,5 +1,8 @@
 const express = require("express");
-const { getReservations, updateReservationStatus, deleteReservation, deleteAllReservations } = require("../lib/supabase");
+const {
+  getReservations, updateReservationStatus, deleteReservation, deleteAllReservations,
+  getBookings, insertBooking, updateBooking, deleteBooking,
+} = require("../lib/supabase");
 
 const router = express.Router();
 
@@ -57,6 +60,48 @@ router.delete("/reservations", async (req, res) => {
   } catch (err) {
     console.error("予約全削除エラー:", err);
     res.status(500).json({ error: "予約の全削除に失敗しました" });
+  }
+});
+
+// --- Bookings (新・予約管理) ---
+
+router.get("/bookings", async (req, res) => {
+  try {
+    const data = await getBookings();
+    res.json(data);
+  } catch (err) {
+    console.error("予約一覧取得エラー:", err);
+    res.status(500).json({ error: "予約の取得に失敗しました" });
+  }
+});
+
+router.post("/bookings", async (req, res) => {
+  try {
+    const data = await insertBooking(req.body);
+    res.json(data);
+  } catch (err) {
+    console.error("予約追加エラー:", err);
+    res.status(500).json({ error: "予約の追加に失敗しました" });
+  }
+});
+
+router.patch("/bookings/:id", async (req, res) => {
+  try {
+    const data = await updateBooking(req.params.id, req.body);
+    res.json(data);
+  } catch (err) {
+    console.error("予約更新エラー:", err);
+    res.status(500).json({ error: "予約の更新に失敗しました" });
+  }
+});
+
+router.delete("/bookings/:id", async (req, res) => {
+  try {
+    await deleteBooking(req.params.id);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("予約削除エラー:", err);
+    res.status(500).json({ error: "予約の削除に失敗しました" });
   }
 });
 
