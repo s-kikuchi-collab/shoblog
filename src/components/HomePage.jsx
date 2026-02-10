@@ -91,7 +91,7 @@ export default function HomePage({ pf, setPf, doSearch, TOT }) {
       <div className={s.grid}>
 
         {/* 料理ジャンル */}
-        <Section icon="🍽" title="料理ジャンル" defaultOpen>
+        <Section icon="🍽" title="料理ジャンル">
           <div className={s.pills}>
             <Ch label="すべて" active={pf.genre === "すべて"} onClick={() => setPf((p) => ({ ...p, genre: "すべて" }))} />
             {GENRES.filter((g) => g !== "すべて").map((g) => {
@@ -105,7 +105,7 @@ export default function HomePage({ pf, setPf, doSearch, TOT }) {
         </Section>
 
         {/* エリア（複数選択可） */}
-        <Section icon="📍" title="エリア（複数選択可）" defaultOpen>
+        <Section icon="📍" title="エリア（複数選択可）">
           <div className={s.areaWrap}>
             <div className={s.areaGroupPills}>
               <ColorPill label="すべて" color="#C4A474" active={pf.area.length === 0}
