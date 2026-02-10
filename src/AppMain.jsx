@@ -207,7 +207,7 @@ export default function AppMain({ onLogout }) {
       });
       await fetchResv();
       // Create dining log via API
-      await fetch(API_BASE + "/api/logs", {
+      const logResp = await fetch(API_BASE + "/api/logs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -218,6 +218,7 @@ export default function AppMain({ onLogout }) {
           who: logData.who || "shobu",
         }),
       });
+      if (!logResp.ok) throw new Error("Log POST failed");
       await fetchLogs();
       // Update visit count in db
       const match = db.find((x) => x.n === logData.name);
@@ -300,7 +301,7 @@ export default function AppMain({ onLogout }) {
     if (!d.name || !d.date) return;
     setBusyKey("addLog", true);
     try {
-      await fetch(API_BASE + "/api/logs", {
+      const resp = await fetch(API_BASE + "/api/logs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -311,6 +312,7 @@ export default function AppMain({ onLogout }) {
           who: d.who || "shobu",
         }),
       });
+      if (!resp.ok) throw new Error("POST failed");
       await fetchLogs();
       const exist = db.find((x) => x.n === d.name);
       if (exist) {

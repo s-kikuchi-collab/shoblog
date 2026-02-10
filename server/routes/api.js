@@ -124,7 +124,7 @@ router.post("/logs", async (req, res) => {
     res.json(data);
   } catch (err) {
     console.error("ログ追加エラー:", err);
-    res.status(500).json({ error: "ログの追加に失敗しました" });
+    res.status(500).json({ error: "ログの追加に失敗しました", detail: err.message || String(err) });
   }
 });
 
