@@ -137,3 +137,23 @@
   cursor: default;
   opacity: 0.4;
 }
+
+.cfmBtn {
+  background: transparent;
+  border: none;
+  color: #c88080;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 2px 4px;
+  font-family: inherit;
+}
+
+.cfmCancel {
+  background: transparent;
+  border: none;
+  color: var(--dc);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 2px 4px;
+  font-family: inherit;
+}

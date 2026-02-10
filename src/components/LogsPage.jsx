@@ -8,6 +8,7 @@ import s from "./LogsPage.module.css";
 
 export default function LogsPage({ logs, fLogs, lf, setLf, setPg, delLog, updateLog, busy, db }) {
   const [editId, setEditId] = useState(null);
+  const [delCfm, setDelCfm] = useState(null);
 
   const dbMap = useMemo(() => {
     const m = {};
@@ -97,13 +98,18 @@ export default function LogsPage({ logs, fLogs, lf, setLf, setPg, delLog, update
                 </div>
                 <div className={s.btnGroup}>
                   <button onClick={() => setEditId(x.id)} className={s.editBtn}>✏️</button>
-                  <button
-                    onClick={() => delLog(x.id)}
-                    disabled={busy.delLog}
-                    className={`${s.delBtn} ${busy.delLog ? s.delBtnDisabled : ""}`}
-                  >
-                    ✕
-                  </button>
+                  {delCfm === x.id ? (
+                    <>
+                      <button onClick={() => { delLog(x.id); setDelCfm(null); }}
+                        disabled={busy.delLog}
+                        className={`${s.cfmBtn} ${busy.delLog ? s.delBtnDisabled : ""}`}>
+                        確定
+                      </button>
+                      <button onClick={() => setDelCfm(null)} className={s.cfmCancel}>戻る</button>
+                    </>
+                  ) : (
+                    <button onClick={() => setDelCfm(x.id)} className={s.delBtn}>✕</button>
+                  )}
                 </div>
               </div>
             );
