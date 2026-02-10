@@ -17,7 +17,7 @@ const PURPOSES = [
   { value: "仕事仲間", icon: "💼" },
 ];
 
-const WHOS = ["shobu", "aco"];
+const WHOS = ["shobu", "Ena"];
 
 function today() {
   return new Date().toISOString().slice(0, 10);
