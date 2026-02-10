@@ -35,12 +35,8 @@ export default function AppMain({ onLogout }) {
   const [cfm, setCfm] = useState(null);
   const [ready, setReady] = useState(false);
   const [resv, setResv] = useState([]);
-  const [resvF, setResvF] = useState("");
-  const [resvS, setResvS] = useState("all");
-  const [resvLoading, setResvLoading] = useState(false);
   const [toasts, setToasts] = useState([]);
   const [busy, setBusy] = useState({});
-  const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:3000";
 
   const toast = useCallback((type, message) => {
     const id = Date.now() + Math.random();
@@ -92,13 +88,16 @@ export default function AppMain({ onLogout }) {
       } catch (e) {
         toast("error", "記録の読み込みに失敗しました");
       }
+      try {
+        const r = await sbGet("reservations");
+        if (r) {
+          const rv = typeof r === "string" ? JSON.parse(r) : r;
+          setResv(rv);
+        }
+      } catch (e) {}
       setReady(true);
     })();
   }, []);
-
-  useEffect(() => {
-    if (pg === "reservations") fetchResv();
-  }, [pg]);
 
   const svDb = useCallback(async (d) => {
     setDb(d);
@@ -110,92 +109,85 @@ export default function AppMain({ onLogout }) {
     await sbSet("dining-logs", d);
   }, []);
 
-  const fetchResv = useCallback(
-    async (st, q) => {
-      setResvLoading(true);
-      try {
-        const s = st || resvS;
-        const p = new URLSearchParams();
-        if (s !== "all") p.set("status", s);
-        if (q) p.set("search", q);
-        const r = await fetch(API_BASE + "/api/reservations?" + p.toString());
-        const d = await r.json();
-        setResv(d.data || []);
-      } catch (e) {
-        toast("error", "予約の取得に失敗しました");
-      }
-      setResvLoading(false);
-    },
-    [resvS, toast]
-  );
+  const svResv = useCallback(async (d) => {
+    setResv(d);
+    await sbSet("reservations", d);
+  }, []);
 
-  const updateResv = useCallback(
-    async (id, status) => {
-      setBusyKey("updateResv", true);
-      try {
-        await fetch(API_BASE + "/api/reservations/" + id, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status }),
-        });
-        if (status === "confirmed") {
-          const rv = resv.find((x) => x.id === id);
-          if (rv) {
-            const newLog = {
-              id: Date.now(), name: rv.restaurant_name, area: "", genre: "",
-              date: rv.date, rating: 4,
-              note: "LINE予約（" + rv.line_display_name + "・" + rv.party_size + "名）",
-              isNew: false,
-            };
-            const match = db.find((x) => x.n === rv.restaurant_name);
-            if (match) { newLog.area = match.a; newLog.genre = match.g; }
-            const ul = [newLog, ...logs];
-            await svLg(ul);
-            if (match) {
-              const nd = db.map((x) => (x.id === match.id ? { ...x, v: x.v + 1 } : x));
-              await svDb(nd);
-            }
-          }
-        }
-        toast("success", "予約を更新しました");
-        fetchResv();
-      } catch (e) {
-        toast("error", "予約の更新に失敗しました");
-      }
-      setBusyKey("updateResv", false);
-    },
-    [fetchResv, resv, db, logs, svLg, svDb, toast, setBusyKey]
-  );
+  const addResv = useCallback(async (rv) => {
+    setBusyKey("addResv", true);
+    try {
+      const nr = {
+        ...rv,
+        id: crypto.randomUUID(),
+        status: "upcoming",
+        satisfaction: null,
+        comment: "",
+        createdAt: new Date().toISOString(),
+        completedAt: null,
+      };
+      await svResv([nr, ...resv]);
+      toast("success", "予約を追加しました");
+    } catch (e) {
+      toast("error", "予約の追加に失敗しました");
+    }
+    setBusyKey("addResv", false);
+  }, [resv, svResv, toast, setBusyKey]);
 
-  const deleteResv = useCallback(
-    async (id) => {
-      setBusyKey("deleteResv", true);
-      try {
-        await fetch(API_BASE + "/api/reservations/" + id, { method: "DELETE" });
-        toast("success", "予約を削除しました");
-        fetchResv();
-      } catch (e) {
-        toast("error", "予約の削除に失敗しました");
-      }
-      setBusyKey("deleteResv", false);
-    },
-    [fetchResv, toast, setBusyKey]
-  );
+  const editResv = useCallback(async (id, data) => {
+    setBusyKey("editResv", true);
+    try {
+      await svResv(resv.map((r) => (r.id === id ? { ...r, ...data } : r)));
+      toast("success", "予約を更新しました");
+    } catch (e) {
+      toast("error", "予約の更新に失敗しました");
+    }
+    setBusyKey("editResv", false);
+  }, [resv, svResv, toast, setBusyKey]);
 
-  const clearResv = useCallback(
-    async () => {
-      setBusyKey("clearResv", true);
-      try {
-        await fetch(API_BASE + "/api/reservations", { method: "DELETE" });
-        toast("success", "全予約を削除しました");
-        fetchResv();
-      } catch (e) {
-        toast("error", "全削除に失敗しました");
+  const deleteResv = useCallback(async (id) => {
+    setBusyKey("deleteResv", true);
+    try {
+      await svResv(resv.filter((r) => r.id !== id));
+      toast("success", "予約を削除しました");
+    } catch (e) {
+      toast("error", "予約の削除に失敗しました");
+    }
+    setBusyKey("deleteResv", false);
+  }, [resv, svResv, toast, setBusyKey]);
+
+  const completeResv = useCallback(async (id, satisfaction, comment) => {
+    setBusyKey("completeResv", true);
+    try {
+      const rv = resv.find((r) => r.id === id);
+      if (!rv) return;
+      const now = new Date().toISOString();
+      await svResv(resv.map((r) =>
+        r.id === id ? { ...r, status: "completed", satisfaction, comment, completedAt: now } : r
+      ));
+      const match = db.find((x) => x.n === rv.shop);
+      const newLog = {
+        id: Date.now(),
+        name: rv.shop,
+        area: match ? match.a : "",
+        genre: match ? match.g : "",
+        date: rv.date,
+        rating: satisfaction,
+        note: comment,
+        who: rv.who,
+        isNew: false,
+      };
+      const ul = [newLog, ...logs];
+      await svLg(ul);
+      if (match) {
+        await svDb(db.map((x) => (x.id === match.id ? { ...x, v: x.v + 1 } : x)));
       }
-      setBusyKey("clearResv", false);
-    },
-    [fetchResv, toast, setBusyKey]
-  );
+      toast("success", "完了しました");
+    } catch (e) {
+      toast("error", "完了処理に失敗しました");
+    }
+    setBusyKey("completeResv", false);
+  }, [resv, svResv, db, logs, svLg, svDb, toast, setBusyKey]);
 
   const lb = useMemo(() => {
     const m = {};
@@ -439,12 +431,11 @@ export default function AppMain({ onLogout }) {
         )}
         {pg === "add" && <AddLogPage nl={nl} setNl={setNl} db={db} addLog={addLog} busy={busy} />}
 
-        {/* 予定タブ: 予約 */}
+        {/* 予定タブ */}
         {pg === "reservations" && (
           <ReservationsPage
-            resv={resv} resvF={resvF} setResvF={setResvF} resvS={resvS}
-            setResvS={setResvS} resvLoading={resvLoading} fetchResv={fetchResv}
-            updateResv={updateResv} deleteResv={deleteResv} clearResv={clearResv} busy={busy}
+            resv={resv} db={db} busy={busy}
+            addResv={addResv} editResv={editResv} deleteResv={deleteResv} completeResv={completeResv}
           />
         )}
 

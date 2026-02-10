@@ -20,66 +20,201 @@
   color: var(--dc);
 }
 
-.toolbar {
+/* 新規追加ボタン */
+.addBtn {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 1px dashed rgba(196,164,116,0.3);
+  color: var(--gc);
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+
+/* セクション */
+.section {
+  margin-bottom: 24px;
+}
+
+.sectionHeader {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gc);
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(196,164,116,0.15);
+}
+
+/* フォーム */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 80px;
+  gap: 8px;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.formLabel {
+  font-size: 11px;
+  color: var(--dc);
+  letter-spacing: 1px;
+}
+
+.formActions {
   display: flex;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-top: 4px;
+}
+
+.chips {
+  display: flex;
   flex-wrap: wrap;
+  gap: 6px;
 }
 
-.searchInput {
+.saveBtn {
   flex: 1;
-  min-width: 200px;
+  background: rgba(196,164,116,0.15);
+  border: 1px solid rgba(196,164,116,0.4);
+  color: var(--gc);
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 1px;
 }
 
-.loadingWrap {
-  text-align: center;
-  padding: 40px;
+.saveBtnOff {
+  opacity: 0.4;
+  cursor: default;
 }
 
-.emptyWrap {
-  text-align: center;
-  padding: 40px;
+.cancelBtn {
+  background: transparent;
+  border: 1px solid rgba(196,164,116,0.2);
+  color: var(--dc);
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* サジェスト */
+.suggestWrap {
+  position: relative;
+}
+
+.suggestDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: #1a1510;
+  border: 1px solid rgba(196,164,116,0.25);
+  border-radius: 6px;
+  margin-top: 2px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.suggestItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(196,164,116,0.08);
+  color: var(--tx);
+  padding: 10px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.suggestItem:last-child {
+  border-bottom: none;
+}
+
+.suggestItem:hover {
+  background: rgba(196,164,116,0.08);
+}
+
+.suggestMeta {
+  font-size: 10px;
   color: var(--dc);
 }
 
-.emptyIcon {
-  font-size: 36px;
-}
-
-.emptyHint {
-  font-size: 11px;
-}
-
+/* グリッド */
 .grid {
   display: grid;
   gap: 8px;
 }
 
-.resvCard {
+/* カード */
+.card {
   background: rgba(26,21,16,0.8);
   border: 1px solid rgba(196,164,116,0.1);
   border-radius: 10px;
   padding: 14px 18px;
 }
 
-.resvHeader {
+.cardPast {
+  border-color: rgba(232,200,122,0.3);
+}
+
+.cardCompleted {
+  background: rgba(26,21,16,0.5);
+  border: 1px solid rgba(196,164,116,0.08);
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+
+.cardHeader {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: 8px;
 }
 
-.resvName {
+.cardName {
   font-size: 14px;
   color: var(--tx);
 }
 
-.resvNameRow {
+.cardActions {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
+  gap: 4px;
+}
+
+.iconBtn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 6px;
+  color: var(--dc);
+  font-family: inherit;
 }
 
 .tagRow {
@@ -89,80 +224,88 @@
   margin-bottom: 4px;
 }
 
-.statusBadge {
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 10px;
+/* 完了ボタン */
+.completeBtn {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  background: rgba(120,200,120,0.12);
+  border: 1px solid rgba(120,200,120,0.3);
+  color: #78c878;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 1px;
 }
 
-.statusPending {
-  background: rgba(232,200,122,0.15);
+/* 完了フォーム */
+.completeForm {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(196,164,116,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 星 */
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.star {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 2px;
+  color: #4a3a2a;
+}
+
+.starOn {
   color: #e8c87a;
 }
 
-.statusConfirmed {
-  background: rgba(120,200,120,0.15);
-  color: #78c878;
+/* テキストエリア */
+.textarea {
+  resize: vertical;
+  min-height: 60px;
 }
 
-.statusCancelled {
-  background: rgba(200,100,100,0.15);
-  color: #c88080;
-}
-
-.actionGroup {
-  display: flex;
-  gap: 4px;
-  flex-shrink: 0;
-}
-
-.confirmActionBtn {
-  background: rgba(120,200,120,0.15);
-  border: 1px solid rgba(120,200,120,0.3);
-  color: #78c878;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-family: inherit;
-  cursor: pointer;
-}
-
-.cancelActionBtn {
-  background: rgba(200,100,100,0.15);
-  border: 1px solid rgba(200,100,100,0.3);
-  color: #c88080;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-family: inherit;
-  cursor: pointer;
-}
-
-.deleteActionBtn {
-  background: rgba(160,80,80,0.15);
-  border: 1px solid rgba(160,80,80,0.3);
-  color: #a05050;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-family: inherit;
-  cursor: pointer;
-}
-
-.actionBtnBusy {
-  cursor: default;
-  opacity: 0.5;
-}
-
-.rawMessage {
-  font-size: 11px;
+/* コメント */
+.commentText {
+  font-size: 12px;
   color: #6b5b4b;
+  margin-top: 6px;
   padding-top: 6px;
-  border-top: 1px solid rgba(196,164,116,0.1);
+  border-top: 1px solid rgba(196,164,116,0.08);
 }
 
-.timestamp {
-  font-size: 10px;
-  color: #4a3a2a;
-  margin-top: 4px;
+/* もっと見る */
+.moreBtn {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  background: transparent;
+  border: 1px solid rgba(196,164,116,0.15);
+  color: var(--dc);
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* 空状態 */
+.emptyWrap {
+  text-align: center;
+  padding: 20px;
+  color: var(--dc);
+}
+
+.emptyHint {
+  font-size: 12px;
 }
