@@ -190,6 +190,17 @@
   padding: 14px 18px;
 }
 
+.cardBody {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cardContent {
+  flex: 1;
+  min-width: 0;
+}
+
 .cardHeader {
   display: flex;
   justify-content: space-between;

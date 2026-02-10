@@ -3,6 +3,7 @@ import { toHiragana } from "../data/kana-map";
 import KANA_MAP from "../data/kana-map";
 import { Ch } from "./ui/Chip";
 import Tg from "./ui/Tag";
+import RestThumb from "./ui/RestThumb";
 import LogEntryForm from "./ui/LogEntryForm";
 import shared from "../styles/shared.module.css";
 import s from "./ReservationsPage.module.css";
@@ -148,6 +149,12 @@ export default function ReservationsPage({ resv, db, busy, addResv, editResv, de
   const [completeId, setCompleteId] = useState(null);
   const [delCfm, setDelCfm] = useState(null);
 
+  const dbMap = useMemo(() => {
+    const m = {};
+    (db || []).forEach((r) => { m[r.n] = r; });
+    return m;
+  }, [db]);
+
   const upcoming = useMemo(() =>
     resv.filter((r) => r.status === "upcoming")
       .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time)),
@@ -230,29 +237,34 @@ export default function ReservationsPage({ resv, db, busy, addResv, editResv, de
                   </div>
                 ) : (
                   <>
-                    <div className={s.cardHeader}>
-                      <strong className={s.cardName}>{rv.shop}</strong>
-                      <div className={s.cardActions}>
-                        <button onClick={() => setEditId(rv.id)} className={s.iconBtn}>✏️</button>
-                        {delCfm === rv.id ? (
-                          <>
-                            <button onClick={() => { deleteResv(rv.id); setDelCfm(null); }}
-                              className={s.iconBtn} style={{ color: "#c88080" }}>確定</button>
-                            <button onClick={() => setDelCfm(null)} className={s.iconBtn}>戻る</button>
-                          </>
-                        ) : (
-                          <button onClick={() => setDelCfm(rv.id)} className={s.iconBtn}>🗑</button>
-                        )}
+                    <div className={s.cardBody}>
+                      <RestThumb img={dbMap[rv.shop]?.img} genre={dbMap[rv.shop]?.g} />
+                      <div className={s.cardContent}>
+                        <div className={s.cardHeader}>
+                          <strong className={s.cardName}>{rv.shop}</strong>
+                          <div className={s.cardActions}>
+                            <button onClick={() => setEditId(rv.id)} className={s.iconBtn}>✏️</button>
+                            {delCfm === rv.id ? (
+                              <>
+                                <button onClick={() => { deleteResv(rv.id); setDelCfm(null); }}
+                                  className={s.iconBtn} style={{ color: "#c88080" }}>確定</button>
+                                <button onClick={() => setDelCfm(null)} className={s.iconBtn}>戻る</button>
+                              </>
+                            ) : (
+                              <button onClick={() => setDelCfm(rv.id)} className={s.iconBtn}>🗑</button>
+                            )}
+                          </div>
+                        </div>
+                        <div className={s.cardDateTime}>
+                          <span>📅 {rv.date}</span>
+                          <span>🕐 {rv.time}</span>
+                        </div>
+                        <div className={s.tagRow}>
+                          <Tg t={"👥 " + rv.people + "名"} gold />
+                          {rv.purpose && <Tg t={rv.purpose} />}
+                          <Tg t={rv.who} />
+                        </div>
                       </div>
-                    </div>
-                    <div className={s.cardDateTime}>
-                      <span>📅 {rv.date}</span>
-                      <span>🕐 {rv.time}</span>
-                    </div>
-                    <div className={s.tagRow}>
-                      <Tg t={"👥 " + rv.people + "名"} gold />
-                      {rv.purpose && <Tg t={rv.purpose} />}
-                      <Tg t={rv.who} />
                     </div>
                     <button onClick={() => setCompleteId(rv.id)}
                       className={`${s.completeBtn} ${isPast(rv.date) ? s.completeBtnPast : ""}`}>
