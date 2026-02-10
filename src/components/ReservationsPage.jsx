@@ -253,12 +253,10 @@ export default function ReservationsPage({ resv, db, busy, addResv, editResv, de
                       {rv.purpose && <Tg t={rv.purpose} />}
                       <Tg t={rv.who} />
                     </div>
-                    {isPast(rv.date) && (
-                      <button onClick={() => setCompleteId(rv.id)}
-                        className={`${s.completeBtn} ${s.completeBtnPast}`}>
-                        ✅ 済み
-                      </button>
-                    )}
+                    <button onClick={() => setCompleteId(rv.id)}
+                      className={`${s.completeBtn} ${isPast(rv.date) ? s.completeBtnPast : ""}`}>
+                      ✅ 済み
+                    </button>
                   </>
                 )}
               </div>
