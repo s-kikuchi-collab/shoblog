@@ -1,0 +1,122 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chipRow {
+  display: flex;
+  gap: 8px;
+}
+
+.shopFixed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.shopLabel {
+  font-size: 11px;
+  color: var(--dc);
+}
+
+.shopName {
+  font-size: 15px;
+  color: var(--tx);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 11px;
+  color: var(--gc);
+  letter-spacing: 1px;
+}
+
+.newFields {
+  display: grid;
+  gap: 10px;
+}
+
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.genreWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.ratingRow {
+  display: flex;
+  gap: 2px;
+}
+
+.starBtn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.starDim {
+  opacity: 0.2;
+}
+
+.textareaResize {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.saveBtn {
+  flex: 1;
+  background: var(--gold-gradient);
+  color: var(--bg);
+  border: none;
+  padding: 11px 0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+}
+
+.saveBtnOff {
+  background: rgba(139,115,85,0.2);
+  color: #5a4a3a;
+  cursor: default;
+}
+
+.cancelBtn {
+  background: transparent;
+  border: 1px solid rgba(196,164,116,0.2);
+  color: var(--dc);
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+}

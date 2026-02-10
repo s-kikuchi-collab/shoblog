@@ -7,8 +7,10 @@ import s from "./ManagePage.module.css";
 
 export default function ManagePage({
   db, fDb, mf, setMf, edit, setEdit, saveEdit, delRest, resetDb,
-  cfm, setCfm, mSel, setMSel, logs, delLog, exportDb, importDb, TOT, busy,
+  cfm, setCfm, mSel, setMSel, logs, delLog, exportDb, importDb, TOT, busy, lb,
 }) {
+  // Sort by visit count (logs) descending
+  const sorted = [...fDb].sort((a, b) => ((lb?.[b.n] || 0) + b.v) - ((lb?.[a.n] || 0) + a.v));
   return (
     <div className={s.page}>
       <div className={s.titleWrap}>
@@ -47,7 +49,7 @@ export default function ManagePage({
             </button>
           </div>
           <div className={s.restGrid}>
-            {fDb.map((r) => {
+            {sorted.map((r) => {
               const rLogs = logs
                 .filter((x) => x.name === r.n)
                 .sort((a, b) => (a.date > b.date ? -1 : 1));

@@ -38,6 +38,8 @@ export default function AppMain({ onLogout }) {
   const [toasts, setToasts] = useState([]);
   const [busy, setBusy] = useState({});
 
+  const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:3000";
+
   const toast = useCallback((type, message) => {
     const id = Date.now() + Math.random();
     setToasts((t) => [...t, { id, type, message }]);
@@ -80,12 +82,29 @@ export default function AppMain({ onLogout }) {
       });
       setDb(d);
       try {
-        const r = await sbGet("dining-logs");
-        if (r) {
-          const lg = typeof r === "string" ? JSON.parse(r) : r;
-          setLogs(lg);
+        const lr = await fetch(API_BASE + "/api/logs");
+        const ld = await lr.json();
+        if (Array.isArray(ld)) {
+          setLogs(ld.map((x) => ({
+            id: x.id,
+            name: x.name,
+            date: x.date,
+            rating: x.rating,
+            note: x.memo || "",
+            who: x.who || "shobu",
+            area: "",
+            genre: "",
+          })));
         }
       } catch (e) {
+        // Fallback to local storage
+        try {
+          const r = await sbGet("dining-logs");
+          if (r) {
+            const lg = typeof r === "string" ? JSON.parse(r) : r;
+            setLogs(lg);
+          }
+        } catch (e2) {}
         toast("error", "記録の読み込みに失敗しました");
       }
       setReady(true);
@@ -97,12 +116,24 @@ export default function AppMain({ onLogout }) {
     await sbSet("restaurant-db", d);
   }, []);
 
-  const svLg = useCallback(async (d) => {
-    setLogs(d);
-    await sbSet("dining-logs", d);
+  const fetchLogs = useCallback(async () => {
+    try {
+      const r = await fetch(API_BASE + "/api/logs");
+      const d = await r.json();
+      if (Array.isArray(d)) {
+        setLogs(d.map((x) => ({
+          id: x.id,
+          name: x.name,
+          date: x.date,
+          rating: x.rating,
+          note: x.memo || "",
+          who: x.who || "shobu",
+          area: "",
+          genre: "",
+        })));
+      }
+    } catch (e) {}
   }, []);
-
-  const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:3000";
 
   const fetchResv = useCallback(async () => {
     try {
@@ -160,45 +191,54 @@ export default function AppMain({ onLogout }) {
     setBusyKey("deleteResv", false);
   }, [fetchResv, toast, setBusyKey]);
 
-  const completeResv = useCallback(async (id, satisfaction, comment) => {
+  const completeResv = useCallback(async (id, logData) => {
     setBusyKey("completeResv", true);
     try {
-      const rv = resv.find((r) => r.id === id);
-      if (!rv) return;
+      // Mark booking as completed
       await fetch(API_BASE + "/api/bookings/" + id, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           status: "completed",
-          satisfaction,
-          comment,
+          satisfaction: logData.rating,
+          comment: logData.memo,
           completed_at: new Date().toISOString(),
         }),
       });
       await fetchResv();
-      const match = db.find((x) => x.n === rv.shop);
-      const newLog = {
-        id: Date.now(),
-        name: rv.shop,
-        area: match ? match.a : "",
-        genre: match ? match.g : "",
-        date: rv.date,
-        rating: satisfaction,
-        note: comment,
-        who: rv.who,
-        isNew: false,
-      };
-      const ul = [newLog, ...logs];
-      await svLg(ul);
+      // Create dining log via API
+      await fetch(API_BASE + "/api/logs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: logData.name,
+          date: logData.date,
+          rating: logData.rating,
+          memo: logData.memo,
+          who: logData.who || "shobu",
+        }),
+      });
+      await fetchLogs();
+      // Update visit count in db
+      const match = db.find((x) => x.n === logData.name);
       if (match) {
         await svDb(db.map((x) => (x.id === match.id ? { ...x, v: x.v + 1 } : x)));
+      } else if (logData.isNew && logData.name) {
+        await svDb([
+          ...db,
+          {
+            n: logData.name, a: logData.area || "", f: "", m: "", p: false, semi: false, g8: false,
+            v: 1, g: logData.genre || "", pr: "1万円ぐらい", l: "", img: "", url: "",
+            pn: 0, spec: [], id: logData.name + "_" + Date.now(),
+          },
+        ]);
       }
       toast("success", "完了しました");
     } catch (e) {
       toast("error", "完了処理に失敗しました");
     }
     setBusyKey("completeResv", false);
-  }, [resv, fetchResv, db, logs, svLg, svDb, toast, setBusyKey]);
+  }, [resv, fetchResv, fetchLogs, db, svDb, toast, setBusyKey]);
 
   const lb = useMemo(() => {
     const m = {};
@@ -255,48 +295,70 @@ export default function AppMain({ onLogout }) {
     setPg("results");
   }, [pf, lb, logs, db]);
 
-  const addLog = useCallback(async () => {
-    if (!nl.name || !nl.date) return;
+  const addLog = useCallback(async (logData) => {
+    const d = logData || nl;
+    if (!d.name || !d.date) return;
     setBusyKey("addLog", true);
     try {
-      const u = [{ ...nl, id: Date.now() }, ...logs];
-      await svLg(u);
-      const exist = db.find((x) => x.n === nl.name);
+      await fetch(API_BASE + "/api/logs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: d.name,
+          date: d.date,
+          rating: d.rating || 5,
+          memo: d.memo || d.note || "",
+          who: d.who || "shobu",
+        }),
+      });
+      await fetchLogs();
+      const exist = db.find((x) => x.n === d.name);
       if (exist) {
         await svDb(db.map((x) => (x.id === exist.id ? { ...x, v: x.v + 1 } : x)));
-      } else if (nl.isNew && nl.name) {
+      } else if (d.isNew && d.name) {
         await svDb([
           ...db,
           {
-            n: nl.name, a: nl.area || "", f: "", m: "", p: false, semi: false, g8: false,
-            v: 1, g: nl.genre || "", pr: "1万円ぐらい", l: "", img: "", url: "",
-            pn: 0, spec: [], id: nl.name + "_" + Date.now(),
+            n: d.name, a: d.area || "", f: "", m: "", p: false, semi: false, g8: false,
+            v: 1, g: d.genre || "", pr: "1万円ぐらい", l: "", img: "", url: "",
+            pn: 0, spec: [], id: d.name + "_" + Date.now(),
           },
         ]);
       }
-      setNl({ name: "", area: "", genre: "", date: "", rating: 5, note: "", isNew: false });
+      if (!logData) setNl({ name: "", area: "", genre: "", date: "", rating: 5, note: "", isNew: false });
       toast("success", "記録を保存しました");
       setPg("logs");
     } catch (e) {
       toast("error", "記録の保存に失敗しました");
     }
     setBusyKey("addLog", false);
-  }, [nl, logs, db, svLg, svDb, toast, setBusyKey]);
+  }, [nl, db, fetchLogs, svDb, toast, setBusyKey]);
 
   const delLog = useCallback(async (id) => {
     setBusyKey("delLog", true);
     try {
-      await svLg(logs.filter((x) => x.id !== id));
+      await fetch(API_BASE + "/api/logs/" + id, { method: "DELETE" });
+      await fetchLogs();
       toast("success", "記録を削除しました");
     } catch (e) {
       toast("error", "記録の削除に失敗しました");
     }
     setBusyKey("delLog", false);
-  }, [logs, svLg, toast, setBusyKey]);
+  }, [fetchLogs, toast, setBusyKey]);
+
+  // Enrich logs with area/genre from db
+  const enrichedLogs = useMemo(() => {
+    const dbMap = {};
+    db.forEach((r) => { dbMap[r.n] = r; });
+    return logs.map((x) => {
+      const r = dbMap[x.name];
+      return { ...x, area: x.area || (r ? r.a : ""), genre: x.genre || (r ? r.g : "") };
+    });
+  }, [logs, db]);
 
   const fLogs = useMemo(
-    () => (lf ? logs.filter((x) => [x.name, x.area, x.genre, x.note].some((f) => f && f.includes(lf))) : logs),
-    [logs, lf]
+    () => (lf ? enrichedLogs.filter((x) => [x.name, x.area, x.genre, x.note].some((f) => f && f.includes(lf))) : enrichedLogs),
+    [enrichedLogs, lf]
   );
 
   const fDb = useMemo(() => {
@@ -438,15 +500,16 @@ export default function AppMain({ onLogout }) {
           </div>
         )}
         {pg === "logs" && (
-          <LogsPage logs={logs} fLogs={fLogs} lf={lf} setLf={setLf} setPg={setPg} delLog={delLog} busy={busy} db={db} />
+          <LogsPage logs={enrichedLogs} fLogs={fLogs} lf={lf} setLf={setLf} setPg={setPg} delLog={delLog} busy={busy} db={db} />
         )}
-        {pg === "add" && <AddLogPage nl={nl} setNl={setNl} db={db} addLog={addLog} busy={busy} />}
+        {pg === "add" && <AddLogPage db={db} addLog={addLog} busy={busy} />}
 
         {/* 予定タブ */}
         {pg === "reservations" && (
           <ReservationsPage
             resv={resv} db={db} busy={busy}
             addResv={addResv} editResv={editResv} deleteResv={deleteResv} completeResv={completeResv}
+            setPg={setPg}
           />
         )}
 
@@ -461,11 +524,11 @@ export default function AppMain({ onLogout }) {
           <ManagePage
             db={db} fDb={fDb} mf={mf} setMf={setMf} edit={edit} setEdit={setEdit}
             saveEdit={saveEdit} delRest={delRest} resetDb={resetDb} cfm={cfm} setCfm={setCfm}
-            mSel={mSel} setMSel={setMSel} logs={logs} delLog={delLog}
+            mSel={mSel} setMSel={setMSel} logs={enrichedLogs} delLog={delLog} lb={lb}
             exportDb={exportDb} importDb={importDb} TOT={TOT} busy={busy}
           />
         )}
-        {pg === "analysis" && <AnalysisPage an={an} TOT={TOT} logs={logs} db={db} />}
+        {pg === "analysis" && <AnalysisPage an={an} TOT={TOT} logs={enrichedLogs} db={db} />}
       </main>
       <ToastContainer toasts={toasts} />
     </div>

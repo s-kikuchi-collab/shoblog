@@ -233,14 +233,14 @@
   margin-bottom: 4px;
 }
 
-/* 完了ボタン */
+/* 済みボタン */
 .completeBtn {
   display: block;
   width: 100%;
   margin-top: 10px;
-  background: rgba(120,200,120,0.12);
-  border: 1px solid rgba(120,200,120,0.3);
-  color: #78c878;
+  background: rgba(196,164,116,0.12);
+  border: 1px solid rgba(196,164,116,0.3);
+  color: var(--gc);
   padding: 8px;
   border-radius: 6px;
   font-size: 12px;
@@ -249,39 +249,17 @@
   letter-spacing: 1px;
 }
 
-/* 完了フォーム */
-.completeForm {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(196,164,116,0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* 星 */
-.stars {
-  display: flex;
-  gap: 2px;
-}
-
-.star {
-  background: none;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 0 2px;
-  color: #4a3a2a;
-}
-
-.starOn {
+.completeBtnPast {
+  background: rgba(232,200,122,0.15);
+  border-color: rgba(232,200,122,0.4);
   color: #e8c87a;
 }
 
-/* テキストエリア */
-.textarea {
-  resize: vertical;
-  min-height: 60px;
+/* 完了フォーム */
+.completeFormWrap {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(196,164,116,0.1);
 }
 
 /* コメント */

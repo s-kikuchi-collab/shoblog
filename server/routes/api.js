@@ -2,6 +2,7 @@ const express = require("express");
 const {
   getReservations, updateReservationStatus, deleteReservation, deleteAllReservations,
   getBookings, insertBooking, updateBooking, deleteBooking,
+  getLogs, insertLog, deleteLog,
 } = require("../lib/supabase");
 
 const router = express.Router();
@@ -102,6 +103,38 @@ router.delete("/bookings/:id", async (req, res) => {
   } catch (err) {
     console.error("予約削除エラー:", err);
     res.status(500).json({ error: "予約の削除に失敗しました" });
+  }
+});
+
+// --- Dining Logs ---
+
+router.get("/logs", async (req, res) => {
+  try {
+    const data = await getLogs();
+    res.json(data);
+  } catch (err) {
+    console.error("ログ取得エラー:", err);
+    res.status(500).json({ error: "ログの取得に失敗しました" });
+  }
+});
+
+router.post("/logs", async (req, res) => {
+  try {
+    const data = await insertLog(req.body);
+    res.json(data);
+  } catch (err) {
+    console.error("ログ追加エラー:", err);
+    res.status(500).json({ error: "ログの追加に失敗しました" });
+  }
+});
+
+router.delete("/logs/:id", async (req, res) => {
+  try {
+    await deleteLog(req.params.id);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("ログ削除エラー:", err);
+    res.status(500).json({ error: "ログの削除に失敗しました" });
   }
 });
 

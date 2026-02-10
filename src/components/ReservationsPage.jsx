@@ -3,6 +3,7 @@ import { toHiragana } from "../data/kana-map";
 import KANA_MAP from "../data/kana-map";
 import { Ch } from "./ui/Chip";
 import Tg from "./ui/Tag";
+import LogEntryForm from "./ui/LogEntryForm";
 import shared from "../styles/shared.module.css";
 import s from "./ReservationsPage.module.css";
 
@@ -140,59 +141,15 @@ function ResvForm({ db, onSave, busy, initial, onCancel }) {
   );
 }
 
-function Stars({ value, onChange, readonly }) {
-  return (
-    <div className={s.stars}>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <button key={n} className={`${s.star} ${n <= value ? s.starOn : ""}`}
-          onClick={() => !readonly && onChange(n)} disabled={readonly}>
-          {n <= value ? "★" : "☆"}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function CompleteForm({ onComplete, busy }) {
-  const [sat, setSat] = useState(4);
-  const [comment, setComment] = useState("");
-
-  return (
-    <div className={s.completeForm}>
-      <div className={s.formField}>
-        <label className={s.formLabel}>満足度</label>
-        <Stars value={sat} onChange={setSat} />
-      </div>
-      <div className={s.formField}>
-        <label className={s.formLabel}>コメント</label>
-        <textarea value={comment} onChange={(e) => setComment(e.target.value)}
-          placeholder="料理の感想、雰囲気、次回のメモなど"
-          className={`${shared.input} ${s.textarea}`} rows={3} />
-      </div>
-      <button onClick={() => onComplete(sat, comment)} disabled={busy}
-        className={`${s.completeBtn} ${busy ? s.saveBtnOff : ""}`}>
-        {busy ? "処理中..." : "完了する"}
-      </button>
-    </div>
-  );
-}
-
-export default function ReservationsPage({ resv, db, busy, addResv, editResv, deleteResv, completeResv }) {
+export default function ReservationsPage({ resv, db, busy, addResv, editResv, deleteResv, completeResv, setPg }) {
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
   const [completeId, setCompleteId] = useState(null);
   const [delCfm, setDelCfm] = useState(null);
-  const [showAllCompleted, setShowAllCompleted] = useState(false);
 
   const upcoming = useMemo(() =>
     resv.filter((r) => r.status === "upcoming")
       .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time)),
-    [resv]
-  );
-
-  const completed = useMemo(() =>
-    resv.filter((r) => r.status === "completed")
-      .sort((a, b) => (b.completed_at || "").localeCompare(a.completed_at || "")),
     [resv]
   );
 
@@ -208,12 +165,11 @@ export default function ReservationsPage({ resv, db, busy, addResv, editResv, de
     setEditId(null);
   };
 
-  const handleComplete = async (sat, comment) => {
-    await completeResv(completeId, sat, comment);
+  const handleComplete = async (logData) => {
+    await completeResv(completeId, logData);
     setCompleteId(null);
+    if (setPg) setPg("logs");
   };
-
-  const displayCompleted = showAllCompleted ? completed : completed.slice(0, 5);
 
   return (
     <div className={s.page}>
@@ -248,6 +204,27 @@ export default function ReservationsPage({ resv, db, busy, addResv, editResv, de
                 {editId === rv.id ? (
                   <ResvForm db={db} onSave={handleEdit} busy={busy.editResv}
                     initial={rv} onCancel={() => setEditId(null)} />
+                ) : completeId === rv.id ? (
+                  <div>
+                    <div className={s.cardHeader}>
+                      <strong className={s.cardName}>{rv.shop}</strong>
+                    </div>
+                    <div className={s.cardDateTime}>
+                      <span>📅 {rv.date}</span>
+                      <span>🕐 {rv.time}</span>
+                    </div>
+                    <div className={s.completeFormWrap}>
+                      <LogEntryForm
+                        defaultShop={rv.shop}
+                        defaultDate={rv.date}
+                        defaultWho={rv.who}
+                        onSave={handleComplete}
+                        onCancel={() => setCompleteId(null)}
+                        db={db}
+                        busy={busy.completeResv}
+                      />
+                    </div>
+                  </div>
                 ) : (
                   <>
                     <div className={s.cardHeader}>
@@ -274,13 +251,11 @@ export default function ReservationsPage({ resv, db, busy, addResv, editResv, de
                       {rv.purpose && <Tg t={rv.purpose} />}
                       <Tg t={rv.who} />
                     </div>
-                    {isPast(rv.date) && completeId !== rv.id && (
-                      <button onClick={() => setCompleteId(rv.id)} className={s.completeBtn}>
-                        完了する
+                    {isPast(rv.date) && (
+                      <button onClick={() => setCompleteId(rv.id)}
+                        className={`${s.completeBtn} ${s.completeBtnPast}`}>
+                        ✅ 済み
                       </button>
-                    )}
-                    {completeId === rv.id && (
-                      <CompleteForm onComplete={handleComplete} busy={busy.completeResv} />
                     )}
                   </>
                 )}
@@ -289,37 +264,6 @@ export default function ReservationsPage({ resv, db, busy, addResv, editResv, de
           </div>
         )}
       </div>
-
-      {/* 完了済み */}
-      {completed.length > 0 && (
-        <div className={s.section}>
-          <div className={s.sectionHeader}>完了済み ({completed.length})</div>
-          <div className={s.grid}>
-            {displayCompleted.map((rv) => (
-              <div key={rv.id} className={s.cardCompleted}>
-                <div className={s.cardHeader}>
-                  <strong className={s.cardName}>{rv.shop}</strong>
-                  <Stars value={rv.satisfaction || 0} readonly />
-                </div>
-                <div className={s.cardDateTime}>
-                  <span>📅 {rv.date}</span>
-                </div>
-                <div className={s.tagRow}>
-                  <Tg t={"👥 " + rv.people + "名"} gold />
-                  {rv.purpose && <Tg t={rv.purpose} />}
-                  <Tg t={rv.who} />
-                </div>
-                {rv.comment && <div className={s.commentText}>{rv.comment}</div>}
-              </div>
-            ))}
-          </div>
-          {completed.length > 5 && !showAllCompleted && (
-            <button onClick={() => setShowAllCompleted(true)} className={s.moreBtn}>
-              もっと見る ({completed.length - 5}件)
-            </button>
-          )}
-        </div>
-      )}
     </div>
   );
 }

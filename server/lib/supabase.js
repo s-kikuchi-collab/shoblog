@@ -130,8 +130,47 @@ async function deleteBooking(id) {
   if (error) throw error;
 }
 
+// --- Dining Logs ---
+
+async function getLogs() {
+  const { data, error } = await supabase
+    .from("dining_logs")
+    .select("*")
+    .order("date", { ascending: false });
+
+  if (error) throw error;
+  return data;
+}
+
+async function insertLog(log) {
+  const { data, error } = await supabase
+    .from("dining_logs")
+    .insert({
+      name: log.name,
+      date: log.date,
+      rating: log.rating || 5,
+      memo: log.memo || log.note || "",
+      who: log.who || "shobu",
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+async function deleteLog(id) {
+  const { error } = await supabase
+    .from("dining_logs")
+    .delete()
+    .eq("id", id);
+
+  if (error) throw error;
+}
+
 module.exports = {
   supabase,
   insertReservation, getReservations, updateReservationStatus, deleteReservation, deleteAllReservations,
   getBookings, insertBooking, updateBooking, deleteBooking,
+  getLogs, insertLog, deleteLog,
 };
