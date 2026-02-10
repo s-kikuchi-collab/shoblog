@@ -435,7 +435,22 @@ export default function AppMain({ onLogout }) {
         const d = JSON.parse(t);
         if (d.restaurants && Array.isArray(d.restaurants)) {
           await svDb(d.restaurants);
-          if (d.logs && Array.isArray(d.logs)) await svLg(d.logs);
+          if (d.logs && Array.isArray(d.logs)) {
+            for (const lg of d.logs) {
+              await fetch(API_BASE + "/api/logs", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  name: lg.name,
+                  date: lg.date,
+                  rating: lg.rating || 5,
+                  memo: lg.memo || lg.note || "",
+                  who: lg.who || "shobu",
+                }),
+              });
+            }
+            await fetchLogs();
+          }
           toast("success", "インポート完了: " + d.restaurants.length + "店舗");
         }
       } catch (er) {
@@ -444,7 +459,7 @@ export default function AppMain({ onLogout }) {
       setBusyKey("importDb", false);
       e.target.value = "";
     },
-    [svDb, svLg, toast, setBusyKey]
+    [svDb, fetchLogs, toast, setBusyKey]
   );
 
   const an = useMemo(() => {
