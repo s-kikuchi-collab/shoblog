@@ -265,9 +265,11 @@ export default function ReservationsPage({ resv, db, busy, addResv, editResv, de
                         )}
                       </div>
                     </div>
+                    <div className={s.cardDateTime}>
+                      <span>📅 {rv.date}</span>
+                      <span>🕐 {rv.time}</span>
+                    </div>
                     <div className={s.tagRow}>
-                      <Tg t={"📅 " + rv.date} />
-                      <Tg t={"🕐 " + rv.time} />
                       <Tg t={"👥 " + rv.people + "名"} gold />
                       {rv.purpose && <Tg t={rv.purpose} />}
                       <Tg t={rv.who} />
@@ -299,8 +301,10 @@ export default function ReservationsPage({ resv, db, busy, addResv, editResv, de
                   <strong className={s.cardName}>{rv.shop}</strong>
                   <Stars value={rv.satisfaction || 0} readonly />
                 </div>
+                <div className={s.cardDateTime}>
+                  <span>📅 {rv.date}</span>
+                </div>
                 <div className={s.tagRow}>
-                  <Tg t={"📅 " + rv.date} />
                   <Tg t={"👥 " + rv.people + "名"} gold />
                   {rv.purpose && <Tg t={rv.purpose} />}
                   <Tg t={rv.who} />
