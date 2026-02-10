@@ -151,6 +151,9 @@ async function insertLog(log) {
       rating: log.rating || 5,
       memo: log.memo || log.note || "",
       who: log.who || "shobu",
+      purpose: log.purpose || "",
+      people: log.people || 2,
+      price_per_person: log.price_per_person || "",
     })
     .select()
     .single();

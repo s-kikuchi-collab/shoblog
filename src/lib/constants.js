@@ -96,6 +96,11 @@ export const SPECIALTY_OPTIONS = [
   { label: "会員制", icon: "🔑", color: "#37474F" },
 ];
 
+export const PRICE_PER_PERSON = [
+  "10,000円以下", "15,000円", "20,000円", "25,000円",
+  "30,000円", "40,000円", "50,000円", "60,000円以上",
+];
+
 export const HOURS_OPTIONS = [
   { value: "any", label: "指定なし", icon: "⏰", color: "#C4A474" },
   { value: "22時以降可能", label: "22時以降可能", icon: "🌙", color: "#5D7B93" },

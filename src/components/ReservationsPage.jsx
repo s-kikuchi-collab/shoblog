@@ -218,6 +218,8 @@ export default function ReservationsPage({ resv, db, busy, addResv, editResv, de
                         defaultShop={rv.shop}
                         defaultDate={rv.date}
                         defaultWho={rv.who}
+                        defaultPurpose={rv.purpose}
+                        defaultPeople={rv.people}
                         onSave={handleComplete}
                         onCancel={() => setCompleteId(null)}
                         db={db}

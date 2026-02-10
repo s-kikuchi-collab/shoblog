@@ -62,6 +62,9 @@ export default function LogsPage({ logs, fLogs, lf, setLf, setPg, delLog, busy, 
                         return <Tg key={gg} t={gg} icon={gs.icon} color={gs.color} />;
                       })}
                     <Tg t={"★".repeat(x.rating)} gold />
+                    {x.purpose && <Tg t={x.purpose} />}
+                    {x.people && <Tg t={x.people + "名"} />}
+                    {x.price_per_person && <Tg t={x.price_per_person} />}
                   </div>
                   {x.note && <p className={s.note}>{x.note}</p>}
                 </div>

@@ -1,10 +1,20 @@
 import { useState } from "react";
-import { GENRES, getGenreStyle } from "../../lib/constants";
+import { GENRES, getGenreStyle, PRICE_PER_PERSON } from "../../lib/constants";
 import { Ch } from "./Chip";
 import shared from "../../styles/shared.module.css";
 import s from "./LogEntryForm.module.css";
 
-export default function LogEntryForm({ defaultShop, defaultDate, defaultWho, onSave, onCancel, db, busy }) {
+const PURPOSES = [
+  { value: "接待", icon: "🤝" },
+  { value: "デート", icon: "💕" },
+  { value: "記念日", icon: "🎂" },
+  { value: "1人", icon: "🧘" },
+  { value: "友人", icon: "👫" },
+  { value: "家族", icon: "👨‍👩‍👧" },
+  { value: "仕事仲間", icon: "💼" },
+];
+
+export default function LogEntryForm({ defaultShop, defaultDate, defaultWho, defaultPurpose, defaultPeople, onSave, onCancel, db, busy }) {
   const [isNew, setIsNew] = useState(!defaultShop);
   const [name, setName] = useState(defaultShop || "");
   const [area, setArea] = useState("");
@@ -13,8 +23,10 @@ export default function LogEntryForm({ defaultShop, defaultDate, defaultWho, onS
   const [rating, setRating] = useState(5);
   const [memo, setMemo] = useState("");
   const [who, setWho] = useState(defaultWho || "shobu");
+  const [purpose, setPurpose] = useState(defaultPurpose || "");
+  const [people, setPeople] = useState(defaultPeople || 2);
+  const [pricePerPerson, setPricePerPerson] = useState("");
 
-  // When selecting an existing restaurant, fill area/genre
   const handleSelectExisting = (val) => {
     const r = db.find((x) => x.n === val);
     if (r) {
@@ -28,7 +40,7 @@ export default function LogEntryForm({ defaultShop, defaultDate, defaultWho, onS
 
   const handleSave = () => {
     if (!canSave) return;
-    onSave({ name, area, genre, date, rating, memo, who, isNew });
+    onSave({ name, area, genre, date, rating, memo, who, isNew, purpose, people, price_per_person: pricePerPerson });
   };
 
   return (
@@ -97,10 +109,25 @@ export default function LogEntryForm({ defaultShop, defaultDate, defaultWho, onS
         </div>
       )}
 
+      <div className={s.field}>
+        <label className={s.label}>用途</label>
+        <div className={s.chipRow}>
+          {PURPOSES.map((p) => (
+            <Ch key={p.value} label={`${p.icon} ${p.value}`} active={purpose === p.value}
+              onClick={() => setPurpose(purpose === p.value ? "" : p.value)} />
+          ))}
+        </div>
+      </div>
+
       <div className={s.row}>
         <div className={s.field}>
           <label className={s.label}>訪問日</label>
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={shared.input} />
+        </div>
+        <div className={s.field}>
+          <label className={s.label}>人数</label>
+          <input type="number" value={people} min={1} max={20}
+            onChange={(e) => setPeople(Number(e.target.value))} className={shared.input} />
         </div>
         <div className={s.field}>
           <label className={s.label}>評価</label>
@@ -112,6 +139,16 @@ export default function LogEntryForm({ defaultShop, defaultDate, defaultWho, onS
               </button>
             ))}
           </div>
+        </div>
+      </div>
+
+      <div className={s.field}>
+        <label className={s.label}>1人単価</label>
+        <div className={s.chipRow}>
+          {PRICE_PER_PERSON.map((p) => (
+            <Ch key={p} label={p} active={pricePerPerson === p}
+              onClick={() => setPricePerPerson(pricePerPerson === p ? "" : p)} />
+          ))}
         </div>
       </div>
 

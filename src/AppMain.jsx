@@ -92,6 +92,9 @@ export default function AppMain({ onLogout }) {
             rating: x.rating,
             note: x.memo || "",
             who: x.who || "shobu",
+            purpose: x.purpose || "",
+            people: x.people || 2,
+            price_per_person: x.price_per_person || "",
             area: "",
             genre: "",
           })));
@@ -128,6 +131,9 @@ export default function AppMain({ onLogout }) {
           rating: x.rating,
           note: x.memo || "",
           who: x.who || "shobu",
+          purpose: x.purpose || "",
+          people: x.people || 2,
+          price_per_person: x.price_per_person || "",
           area: "",
           genre: "",
         })));
@@ -216,6 +222,9 @@ export default function AppMain({ onLogout }) {
           rating: logData.rating,
           memo: logData.memo,
           who: logData.who || "shobu",
+          purpose: logData.purpose || "",
+          people: logData.people || 2,
+          price_per_person: logData.price_per_person || "",
         }),
       });
       if (!logResp.ok) throw new Error("Log POST failed");
@@ -310,6 +319,9 @@ export default function AppMain({ onLogout }) {
           rating: d.rating || 5,
           memo: d.memo || d.note || "",
           who: d.who || "shobu",
+          purpose: d.purpose || "",
+          people: d.people || 2,
+          price_per_person: d.price_per_person || "",
         }),
       });
       if (!resp.ok) throw new Error("POST failed");
