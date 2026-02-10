@@ -9,6 +9,7 @@ import s from "./LogsPage.module.css";
 export default function LogsPage({ logs, fLogs, lf, setLf, setPg, delLog, updateLog, busy, db }) {
   const [editId, setEditId] = useState(null);
   const [delCfm, setDelCfm] = useState(null);
+  const [openId, setOpenId] = useState(null);
 
   const dbMap = useMemo(() => {
     const m = {};
@@ -65,52 +66,64 @@ export default function LogsPage({ logs, fLogs, lf, setLf, setPg, delLog, update
                 </div>
               );
             }
+            const isOpen = openId === x.id;
             return (
-              <div key={x.id} className={s.logItem}>
-                <RestThumb img={rest?.img} genre={x.genre || rest?.g} />
-                <div className={s.logContent}>
-                  <div className={s.logNameRow}>
-                    {rest?.url ? (
-                      <span
-                        className={`${s.logName} ${s.logNameLink}`}
-                        onClick={() => window.open(rest.url, "_blank", "noopener,noreferrer")}
+              <div key={x.id} className={`${s.logItem} ${isOpen ? s.logItemOpen : ""}`}>
+                <div className={s.logDate}>{x.date}</div>
+                <div
+                  className={s.logRow}
+                  onClick={() => setOpenId(isOpen ? null : x.id)}
+                >
+                  <RestThumb img={rest?.img} genre={x.genre || rest?.g} />
+                  <div className={s.logContent}>
+                    <span className={s.logName}>{x.name}</span>
+                    <div className={s.tagRow}>
+                      {x.people && <Tg t={x.people + "名"} />}
+                      {x.purpose && <Tg t={x.purpose} />}
+                    </div>
+                  </div>
+                  <span className={s.chevron}>{isOpen ? "▾" : "▸"}</span>
+                </div>
+                {isOpen && (
+                  <div className={s.detailSection}>
+                    <div className={s.tagRow}>
+                      {x.area && <Tg t={x.area} />}
+                      {x.genre &&
+                        x.genre.split("/").map((gg) => {
+                          const gs = getGenreStyle(gg);
+                          return <Tg key={gg} t={gg} icon={gs.icon} color={gs.color} />;
+                        })}
+                      <Tg t={"★".repeat(x.rating)} gold />
+                      {x.price_per_person && <Tg t={x.price_per_person} />}
+                    </div>
+                    {x.note && <p className={s.note}>{x.note}</p>}
+                    {rest?.url && (
+                      <a
+                        href={rest.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={s.urlLink}
                       >
-                        {x.name}<span className={s.extIcon}>↗</span>
-                      </span>
-                    ) : (
-                      <span className={s.logName}>{x.name}</span>
+                        {rest.url.replace(/^https?:\/\//, "").slice(0, 40)}↗
+                      </a>
                     )}
+                    <div className={s.btnGroup}>
+                      <button onClick={() => setEditId(x.id)} className={s.editBtn}>✏️</button>
+                      {delCfm === x.id ? (
+                        <>
+                          <button onClick={() => { delLog(x.id); setDelCfm(null); }}
+                            disabled={busy.delLog}
+                            className={`${s.cfmBtn} ${busy.delLog ? s.delBtnDisabled : ""}`}>
+                            確定
+                          </button>
+                          <button onClick={() => setDelCfm(null)} className={s.cfmCancel}>戻る</button>
+                        </>
+                      ) : (
+                        <button onClick={() => setDelCfm(x.id)} className={s.delBtn}>✕</button>
+                      )}
+                    </div>
                   </div>
-                  <div className={s.tagRow}>
-                    <Tg t={x.date} />
-                    {x.area && <Tg t={x.area} />}
-                    {x.genre &&
-                      x.genre.split("/").map((gg) => {
-                        const gs = getGenreStyle(gg);
-                        return <Tg key={gg} t={gg} icon={gs.icon} color={gs.color} />;
-                      })}
-                    <Tg t={"★".repeat(x.rating)} gold />
-                    {x.purpose && <Tg t={x.purpose} />}
-                    {x.people && <Tg t={x.people + "名"} />}
-                    {x.price_per_person && <Tg t={x.price_per_person} />}
-                  </div>
-                  {x.note && <p className={s.note}>{x.note}</p>}
-                </div>
-                <div className={s.btnGroup}>
-                  <button onClick={() => setEditId(x.id)} className={s.editBtn}>✏️</button>
-                  {delCfm === x.id ? (
-                    <>
-                      <button onClick={() => { delLog(x.id); setDelCfm(null); }}
-                        disabled={busy.delLog}
-                        className={`${s.cfmBtn} ${busy.delLog ? s.delBtnDisabled : ""}`}>
-                        確定
-                      </button>
-                      <button onClick={() => setDelCfm(null)} className={s.cfmCancel}>戻る</button>
-                    </>
-                  ) : (
-                    <button onClick={() => setDelCfm(x.id)} className={s.delBtn}>✕</button>
-                  )}
-                </div>
+                )}
               </div>
             );
           })}

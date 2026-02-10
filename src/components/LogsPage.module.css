@@ -39,10 +39,24 @@
   background: rgba(26,21,16,0.8);
   border: 1px solid rgba(196,164,116,0.1);
   border-radius: 10px;
-  padding: 12px 16px;
+  padding: 10px 14px;
+}
+
+.logItemOpen {
+  border-color: rgba(196,164,116,0.4);
+}
+
+.logDate {
+  font-size: 11px;
+  color: var(--dc);
+  margin-bottom: 6px;
+}
+
+.logRow {
   display: flex;
   align-items: center;
   gap: 12px;
+  cursor: pointer;
 }
 
 .logContent {
@@ -54,46 +68,14 @@
   font-size: 13px;
   font-weight: 500;
   color: var(--tx);
+  display: block;
+  margin-bottom: 2px;
 }
 
-.logNameLink {
-  cursor: pointer;
-  transition: color 0.15s ease;
-}
-
-.logNameLink:hover {
-  color: #C4A474;
-}
-
-.logNameLink .extIcon {
-  opacity: 0.5;
-  transition: opacity 0.15s ease;
-}
-
-.logNameLink:hover .extIcon {
-  opacity: 1;
-}
-
-.extIcon {
-  font-size: 10px;
-  margin-left: 3px;
-  opacity: 0.5;
-  vertical-align: super;
-}
-
-.logNameRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 3px;
-}
-
-.newBadge {
-  background: rgba(232,200,122,0.15);
-  color: #e8c87a;
-  padding: 1px 6px;
-  border-radius: 4px;
-  font-size: 9px;
+.chevron {
+  font-size: 12px;
+  color: var(--dc);
+  flex-shrink: 0;
 }
 
 .tagRow {
@@ -102,17 +84,35 @@
   flex-wrap: wrap;
 }
 
+.detailSection {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(196,164,116,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .note {
   font-size: 11px;
   color: var(--dc);
-  margin: 4px 0 0;
+  margin: 0;
+}
+
+.urlLink {
+  font-size: 11px;
+  color: var(--dc);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.urlLink:hover {
+  color: #C4A474;
 }
 
 .btnGroup {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex-shrink: 0;
+  gap: 6px;
 }
 
 .editBtn {
