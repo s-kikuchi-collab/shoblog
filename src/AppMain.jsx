@@ -260,9 +260,10 @@ export default function AppMain({ onLogout }) {
       );
     }
     if (pf.priv === "yes") c = c.filter((x) => x.p);
-    else if (pf.priv === "no") c = c.filter((x) => !x.p);
     else if (pf.priv === "semi") c = c.filter((x) => x.semi);
     else if (pf.priv === "group8") c = c.filter((x) => x.g8);
+    else if (pf.priv === "table") c = c.filter((x) => x.tbl);
+    else if (pf.priv === "counter") c = c.filter((x) => x.cnt);
     if (pf.hours !== "any") c = c.filter((x) => (x.l || "").includes(pf.hours));
     if (pf.atmo !== "すべて") c = c.filter((x) => x.m.includes(pf.atmo));
     if (pf.price !== "any") {

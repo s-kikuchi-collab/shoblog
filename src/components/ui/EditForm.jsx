@@ -120,6 +120,10 @@ export default function EditForm({ edit, setEdit, saveEdit, onClose, busy, compa
             onClick={() => setEdit((e) => ({ ...e, semi: !e.semi }))} />
           <Ch label="👥 8人可" active={edit.g8}
             onClick={() => setEdit((e) => ({ ...e, g8: !e.g8 }))} />
+          <Ch label="🍽️ テーブル" active={edit.tbl}
+            onClick={() => setEdit((e) => ({ ...e, tbl: !e.tbl }))} />
+          <Ch label="🪑 カウンター" active={edit.cnt}
+            onClick={() => setEdit((e) => ({ ...e, cnt: !e.cnt }))} />
         </div>
       </div>
 

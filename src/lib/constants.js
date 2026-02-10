@@ -59,7 +59,8 @@ export const INTERIOR_OPTIONS = [
   { value: "yes", label: "個室あり", icon: "🚪" },
   { value: "semi", label: "半個室あり", icon: "🪟" },
   { value: "group8", label: "8人同席対応可能", icon: "👥" },
-  { value: "no", label: "カウンター", icon: "🪑" },
+  { value: "table", label: "テーブル", icon: "🍽️" },
+  { value: "counter", label: "カウンター", icon: "🪑" },
 ];
 
 export const PRICE_OPTIONS = [
