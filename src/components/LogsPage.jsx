@@ -1,6 +1,4 @@
 import { useState, useMemo } from "react";
-import { getGenreStyle } from "../lib/constants";
-import Tg from "./ui/Tag";
 import RestThumb from "./ui/RestThumb";
 import LogEntryForm from "./ui/LogEntryForm";
 import shared from "../styles/shared.module.css";
@@ -68,47 +66,44 @@ export default function LogsPage({ logs, fLogs, lf, setLf, setPg, delLog, update
             }
             const isOpen = openId === x.id;
             return (
-              <div key={x.id} className={`${s.logItem} ${isOpen ? s.logItemOpen : ""}`}>
-                <div className={s.logDate}>{x.date}</div>
-                <div
-                  className={s.logRow}
-                  onClick={() => setOpenId(isOpen ? null : x.id)}
-                >
-                  <RestThumb img={rest?.img} genre={x.genre || rest?.g} />
+              <div key={x.id} className={`${s.logItem} ${isOpen ? s.logItemOpen : ""}`}
+                onClick={() => setOpenId(isOpen ? null : x.id)}>
+                <div className={s.logDateBar}>
+                  <span className={s.logDate}>{x.date}</span>
+                  <span className={s.logRating}>{"★".repeat(x.rating || 0)}</span>
+                </div>
+                <div className={s.logRow}>
+                  <RestThumb img={rest?.img} genre={x.genre || rest?.g} size={56} />
                   <div className={s.logContent}>
                     <span className={s.logName}>{x.name}</span>
-                    <div className={s.tagRow}>
-                      {x.people && <Tg t={x.people + "名"} />}
-                      {x.purpose && <Tg t={x.purpose} />}
+                    <div className={s.logMeta}>
+                      {x.purpose && <span className={s.metaItem}>{x.purpose}</span>}
+                      {x.people && <span className={s.metaItem}>{x.people}名</span>}
                     </div>
                   </div>
-                  <span className={s.chevron}>{isOpen ? "▾" : "▸"}</span>
                 </div>
                 {isOpen && (
-                  <div className={s.detailSection}>
-                    <div className={s.tagRow}>
-                      {x.area && <Tg t={x.area} />}
-                      {x.genre &&
-                        x.genre.split("/").map((gg) => {
-                          const gs = getGenreStyle(gg);
-                          return <Tg key={gg} t={gg} icon={gs.icon} color={gs.color} />;
-                        })}
-                      <Tg t={"★".repeat(x.rating)} gold />
-                      {x.price_per_person && <Tg t={x.price_per_person} />}
-                    </div>
-                    {x.note && <p className={s.note}>{x.note}</p>}
-                    {rest?.url && (
-                      <a
-                        href={rest.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={s.urlLink}
-                      >
-                        {rest.url.replace(/^https?:\/\//, "").slice(0, 40)}↗
-                      </a>
+                  <div className={s.detailSection} onClick={(e) => e.stopPropagation()}>
+                    {x.price_per_person && (
+                      <div className={s.detailRow}>
+                        <span className={s.detailLabel}>単価</span>
+                        <span className={s.detailValue}>{x.price_per_person}</span>
+                      </div>
+                    )}
+                    {x.who && (
+                      <div className={s.detailRow}>
+                        <span className={s.detailLabel}>入力者</span>
+                        <span className={s.detailValue}>{x.who}</span>
+                      </div>
+                    )}
+                    {x.note && (
+                      <div className={s.noteWrap}>
+                        <span className={s.detailLabel}>メモ</span>
+                        <p className={s.note}>{x.note}</p>
+                      </div>
                     )}
                     <div className={s.btnGroup}>
-                      <button onClick={() => setEditId(x.id)} className={s.editBtn}>✏️</button>
+                      <button onClick={() => setEditId(x.id)} className={s.editBtn}>✏️ 編集</button>
                       {delCfm === x.id ? (
                         <>
                           <button onClick={() => { delLog(x.id); setDelCfm(null); }}
@@ -119,7 +114,7 @@ export default function LogsPage({ logs, fLogs, lf, setLf, setPg, delLog, update
                           <button onClick={() => setDelCfm(null)} className={s.cfmCancel}>戻る</button>
                         </>
                       ) : (
-                        <button onClick={() => setDelCfm(x.id)} className={s.delBtn}>✕</button>
+                        <button onClick={() => setDelCfm(x.id)} className={s.delBtn}>削除</button>
                       )}
                     </div>
                   </div>

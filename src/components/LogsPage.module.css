@@ -32,31 +32,49 @@
 
 .grid {
   display: grid;
-  gap: 8px;
+  gap: 10px;
 }
 
+/* カード */
 .logItem {
-  background: rgba(26,21,16,0.8);
+  background: rgba(26,21,16,0.85);
   border: 1px solid rgba(196,164,116,0.1);
-  border-radius: 10px;
-  padding: 10px 14px;
+  border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
 }
 
 .logItemOpen {
-  border-color: rgba(196,164,116,0.4);
+  border-color: rgba(196,164,116,0.35);
+}
+
+/* 日付 + 星 */
+.logDateBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .logDate {
-  font-size: 11px;
-  color: var(--dc);
-  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gc);
+  letter-spacing: 1px;
 }
 
+.logRating {
+  font-size: 14px;
+  color: #e8c87a;
+  letter-spacing: 1px;
+}
+
+/* メインコンテンツ行 */
 .logRow {
   display: flex;
   align-items: center;
-  gap: 12px;
-  cursor: pointer;
+  gap: 14px;
 }
 
 .logContent {
@@ -65,72 +83,93 @@
 }
 
 .logName {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
   color: var(--tx);
   display: block;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
-.chevron {
-  font-size: 12px;
-  color: var(--dc);
-  flex-shrink: 0;
-}
-
-.tagRow {
+.logMeta {
   display: flex;
-  gap: 4px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
+.metaItem {
+  font-size: 13px;
+  color: var(--dc);
+}
+
+/* 展開: ログデータ */
 .detailSection {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(196,164,116,0.1);
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(196,164,116,0.12);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+}
+
+.detailRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detailLabel {
+  font-size: 11px;
+  color: var(--dc);
+  min-width: 36px;
+  flex-shrink: 0;
+}
+
+.detailValue {
+  font-size: 13px;
+  color: var(--tx);
+}
+
+.noteWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .note {
-  font-size: 11px;
-  color: var(--dc);
+  font-size: 13px;
+  color: var(--tx);
   margin: 0;
+  line-height: 1.5;
+  opacity: 0.85;
 }
 
-.urlLink {
-  font-size: 11px;
-  color: var(--dc);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-
-.urlLink:hover {
-  color: #C4A474;
-}
-
+/* ボタン */
 .btnGroup {
   display: flex;
-  gap: 6px;
+  gap: 8px;
+  margin-top: 4px;
 }
 
 .editBtn {
-  background: transparent;
-  border: none;
+  background: rgba(196,164,116,0.1);
+  border: 1px solid rgba(196,164,116,0.25);
+  color: var(--gc);
   cursor: pointer;
-  font-size: 14px;
-  padding: 2px 4px;
+  font-size: 12px;
+  font-family: inherit;
+  padding: 5px 12px;
+  border-radius: 5px;
 }
 
 .delBtn {
-  background: transparent;
-  border: none;
-  color: #5a4a3a;
+  background: rgba(160,80,80,0.08);
+  border: 1px solid rgba(160,80,80,0.2);
+  color: #8a6060;
   cursor: pointer;
-  font-size: 14px;
-  padding: 2px 4px;
-  flex-shrink: 0;
+  font-size: 12px;
+  font-family: inherit;
+  padding: 5px 12px;
+  border-radius: 5px;
 }
 
 .delBtnDisabled {
@@ -139,21 +178,23 @@
 }
 
 .cfmBtn {
-  background: transparent;
-  border: none;
+  background: rgba(200,60,60,0.15);
+  border: 1px solid rgba(200,60,60,0.4);
   color: #c88080;
   cursor: pointer;
-  font-size: 11px;
-  padding: 2px 4px;
+  font-size: 12px;
   font-family: inherit;
+  padding: 5px 12px;
+  border-radius: 5px;
 }
 
 .cfmCancel {
   background: transparent;
-  border: none;
+  border: 1px solid rgba(139,115,85,0.2);
   color: var(--dc);
   cursor: pointer;
-  font-size: 11px;
-  padding: 2px 4px;
+  font-size: 12px;
   font-family: inherit;
+  padding: 5px 12px;
+  border-radius: 5px;
 }
