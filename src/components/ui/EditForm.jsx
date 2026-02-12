@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   GENRES, AREA_GROUPS, ATMS, ATMOSPHERE_STYLES, PRS, HOURS,
   PURPOSE_OPTIONS, SPECIALTY_OPTIONS, getGenreStyle,
@@ -6,7 +7,29 @@ import { Ch } from "./Chip";
 import Fd from "./Field";
 import s from "./EditForm.module.css";
 
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:3000";
+
 export default function EditForm({ edit, setEdit, saveEdit, onClose, busy, compact }) {
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+      const r = await fetch(API_BASE + "/api/images/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const d = await r.json();
+      if (d.url) setEdit((prev) => ({ ...prev, img: d.url }));
+    } catch (err) {
+      console.error("Upload failed:", err);
+    }
+    setUploading(false);
+  };
   const toggleSlash = (field, val) => {
     setEdit((e) => {
       const arr = (e[field] || "").split("/").filter(Boolean);
@@ -161,9 +184,20 @@ export default function EditForm({ edit, setEdit, saveEdit, onClose, busy, compa
         </div>
       </div>
 
-      <div className={s.row2}>
-        <Fd label="訪問回数" val={edit.v} set={(v) => setEdit((e) => ({ ...e, v: v }))} type="number" />
-        <Fd label="画像URL" val={edit.img || ""} set={(v) => setEdit((e) => ({ ...e, img: v }))} ph="https://..." />
+      <Fd label="訪問回数" val={edit.v} set={(v) => setEdit((e) => ({ ...e, v: v }))} type="number" />
+
+      <div className={s.sec}>
+        <label className={s.secLabel}>📷 画像</label>
+        {edit.img && (
+          <div className={s.imgPreview}>
+            <img src={edit.img} alt="" className={s.imgThumb} />
+            <button onClick={() => setEdit((e) => ({ ...e, img: "" }))} className={s.imgClear}>✕</button>
+          </div>
+        )}
+        <label className={s.uploadBtn}>
+          {uploading ? "アップロード中..." : "画像を選択"}
+          <input type="file" accept="image/*" onChange={handleImageUpload} hidden disabled={uploading} />
+        </label>
       </div>
 
       <Fd label="外部リンク（食べログ等）" val={edit.url || ""} set={(v) => setEdit((e) => ({ ...e, url: v }))} ph="https://tabelog.com/..." />

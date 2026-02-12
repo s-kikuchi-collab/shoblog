@@ -134,6 +134,12 @@
   white-space: nowrap;
 }
 
+.migrateBtn {
+  white-space: nowrap;
+  color: #7090c0;
+  border-color: rgba(112,144,192,0.3);
+}
+
 .resetBtn {
   white-space: nowrap;
   color: #a07050;

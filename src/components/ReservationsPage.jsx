@@ -148,6 +148,11 @@ export default function ReservationsPage({ resv, db, busy, addResv, editResv, de
   const [editId, setEditId] = useState(null);
   const [completeId, setCompleteId] = useState(null);
   const [delCfm, setDelCfm] = useState(null);
+  const [viewMonth, setViewMonth] = useState(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  });
+  const [showAll, setShowAll] = useState(false);
 
   const dbMap = useMemo(() => {
     const m = {};
@@ -160,6 +165,26 @@ export default function ReservationsPage({ resv, db, busy, addResv, editResv, de
       .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time)),
     [resv]
   );
+
+  const filteredUpcoming = useMemo(() => {
+    if (showAll) return upcoming;
+    return upcoming.filter((r) => r.date.startsWith(viewMonth));
+  }, [upcoming, viewMonth, showAll]);
+
+  const prevMonth = () => {
+    const [y, m] = viewMonth.split("-").map(Number);
+    const d = new Date(y, m - 2, 1);
+    setViewMonth(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
+  };
+  const nextMonth = () => {
+    const [y, m] = viewMonth.split("-").map(Number);
+    const d = new Date(y, m, 1);
+    setViewMonth(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
+  };
+  const monthLabel = (() => {
+    const [y, m] = viewMonth.split("-").map(Number);
+    return `${y}年${m}月`;
+  })();
 
   const isPast = (date) => date < today();
 
@@ -198,16 +223,29 @@ export default function ReservationsPage({ resv, db, busy, addResv, editResv, de
         </button>
       )}
 
+      {/* 月セレクター */}
+      <div className={s.monthSelector}>
+        {!showAll && <button onClick={prevMonth} className={s.monthBtn}>◀</button>}
+        <span className={s.monthLabel}>{showAll ? "全て表示" : monthLabel}</span>
+        {!showAll && <button onClick={nextMonth} className={s.monthBtn}>▶</button>}
+        <button
+          onClick={() => setShowAll(!showAll)}
+          className={`${s.allBtn} ${showAll ? s.allBtnActive : ""}`}
+        >
+          {showAll ? "月別" : "全て"}
+        </button>
+        <span className={s.monthCount}>{filteredUpcoming.length}件</span>
+      </div>
+
       {/* これから */}
       <div className={s.section}>
-        <div className={s.sectionHeader}>これから ({upcoming.length})</div>
-        {upcoming.length === 0 ? (
+        {filteredUpcoming.length === 0 ? (
           <div className={s.emptyWrap}>
             <p className={s.emptyHint}>予約がありません</p>
           </div>
         ) : (
           <div className={s.grid}>
-            {upcoming.map((rv) => (
+            {filteredUpcoming.map((rv) => (
               <div key={rv.id} className={`${s.card} ${isPast(rv.date) ? s.cardPast : ""}`}>
                 {editId === rv.id ? (
                   <ResvForm db={db} onSave={handleEdit} busy={busy.editResv}

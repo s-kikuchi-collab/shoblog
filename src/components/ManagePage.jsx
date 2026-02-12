@@ -8,6 +8,7 @@ import s from "./ManagePage.module.css";
 export default function ManagePage({
   db, fDb, mf, setMf, edit, setEdit, saveEdit, delRest, resetDb,
   cfm, setCfm, mSel, setMSel, logs, delLog, exportDb, importDb, TOT, busy, lb,
+  migrateImages, migrating, migrateProgress,
 }) {
   // Sort by visit count (logs) descending
   const sorted = [...fDb].sort((a, b) => ((lb?.[b.n] || 0) + b.v) - ((lb?.[a.n] || 0) + a.v));
@@ -46,6 +47,13 @@ export default function ManagePage({
               className={`${shared.link} ${s.addBtn}`}
             >
               ＋ 新規店舗
+            </button>
+            <button
+              onClick={migrateImages}
+              disabled={migrating}
+              className={`${shared.link} ${s.migrateBtn}`}
+            >
+              {migrating ? migrateProgress : "📷 画像移行"}
             </button>
           </div>
           <div className={s.restGrid}>

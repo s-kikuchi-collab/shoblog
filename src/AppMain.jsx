@@ -368,6 +368,39 @@ export default function AppMain({ onLogout }) {
     setBusyKey("updateLog", false);
   }, [fetchLogs, toast, setBusyKey]);
 
+  // 画像移行
+  const [migrating, setMigrating] = useState(false);
+  const [migrateProgress, setMigrateProgress] = useState("");
+  const migrateImages = useCallback(async () => {
+    const targets = db.filter((r) => r.img && r.img.startsWith("http") && !r.img.includes("supabase.co"));
+    if (targets.length === 0) { toast("info", "移行対象の画像がありません"); return; }
+    setMigrating(true);
+    let done = 0;
+    const nd = [...db];
+    for (const r of targets) {
+      done++;
+      setMigrateProgress(`${done}/${targets.length} 移行中...`);
+      try {
+        const resp = await fetch(API_BASE + "/api/images/migrate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: r.img, name: r.n }),
+        });
+        const d = await resp.json();
+        if (d.url) {
+          const idx = nd.findIndex((x) => x.id === r.id);
+          if (idx >= 0) nd[idx] = { ...nd[idx], img: d.url };
+        }
+      } catch (e) {
+        console.error("移行失敗:", r.n, e);
+      }
+    }
+    await svDb(nd);
+    setMigrating(false);
+    setMigrateProgress("");
+    toast("success", `${done}件の画像を移行しました`);
+  }, [db, svDb, toast]);
+
   // Enrich logs with area/genre from db
   const enrichedLogs = useMemo(() => {
     const dbMap = {};
@@ -563,6 +596,7 @@ export default function AppMain({ onLogout }) {
             saveEdit={saveEdit} delRest={delRest} resetDb={resetDb} cfm={cfm} setCfm={setCfm}
             mSel={mSel} setMSel={setMSel} logs={enrichedLogs} delLog={delLog} lb={lb}
             exportDb={exportDb} importDb={importDb} TOT={TOT} busy={busy}
+            migrateImages={migrateImages} migrating={migrating} migrateProgress={migrateProgress}
           />
         )}
         {pg === "analysis" && <AnalysisPage an={an} TOT={TOT} logs={enrichedLogs} db={db} />}
